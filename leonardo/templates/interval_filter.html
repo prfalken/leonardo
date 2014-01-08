@@ -1,0 +1,12 @@
+<ul class="nav nav-pills">
+  {% for options in view.interval_filters %}
+    <li {{' class="active"' if options['from'] == dashboard.graph_from }}>{{ view.link_to_interval(options, dashboard.category, dashboard.short_name)|safe }}</li>
+  {% endfor %}
+  <li><a id="toggleDateTimePicker" href="#">Select Date</a></li>
+</ul>
+
+<div class="nav" id="dateTimePicker">
+  From: <input type="text"  name="dt_from" id="dt_from" value="{{ view.fmt_for_select_date(dashboard.graph_from, 'from') }}" class="hasDatepicker center"/>
+  To: <input type="text" name="dt_to" id="dt_to" value="{{ view.fmt_for_select_date(dashboard.graph_until, 'until') }}" class="hasDatepicker center"/>
+  <button type="button" class="btn" onClick="selectDt()">Show</button>
+</div>

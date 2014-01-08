@@ -1,0 +1,5 @@
+config/*
+!config/leonardo.yaml.example
+gen_graphs.py
+*.pyc
+graphs/*

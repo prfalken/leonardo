@@ -1,0 +1,36 @@
+graphite: http://graphite.example.com
+templatedir: graphs
+#:username: admin
+#:password: secret
+options:
+  title: "Leonardo"
+  prefix: ""
+  refresh_rate: 30
+  graph_columns: 3
+  graph_width: 450
+  graph_height: 220
+  interval_filters:
+    - label: 30 minutes
+      from: -30min
+      to: now
+    - label: 2 hours
+      from: -2hour
+    - label: 8 hours
+      from: -8hour
+    - label: 24 hours
+      from: -1day
+    - label: 1 week
+      from: -7day
+    - label: 1 month
+      from: -30day
+    - label: 1 year
+      from: -1year
+  intervals:
+    - [ "-30min", "30 minutes" ]
+    - [ "-2hour", "2 hours" ]
+    - [ "-8hour", "8 hours" ]
+    - [ "-1day", "24 hours" ]
+    - [ "-7day", "1 week" ]
+    - [ "-30day", "1 month" ]
+    - [ "-1year", "1 year" ]
+

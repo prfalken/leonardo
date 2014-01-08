@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row-fluid">
+  <div class="span8">
+    <h2>{{ graphs[0].graphite.properties.title }}&nbsp;<small>in <a href="/{{ dashboard.category}}/{{ dashboard.short_name }}/">{{ dashboard.short_name }}</a></small></h2>
+  </div>
+  <div class="span2">
+    {% include 'zoom_box.html' %}
+  </div>
+</div>
+
+
+<div>
+  <table align=center>
+    <tr>
+      {% for graph in graphs %}
+      <td class="td-padded">
+          {% include 'graph.html' %}
+      </td>
+      {% if loop.index is divisibleby dashboard.graph_columns %}
+        </tr>
+        <tr>
+      {% endif %}
+      {% endfor %}
+      </span>
+    </tr>
+  </table>
+
+</div>
+{% endblock %}

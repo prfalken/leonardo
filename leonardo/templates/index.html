@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+{%  for category in dashboards recursive %}
+<h3>{{ category }}</h3>
+
+<table class="table">
+    <thead>
+        <th width="30%">Name</th>
+        <th width="70%">Description</th>
+    </thead>
+    <tbody>
+        {% for dash in dashboards[category]%}
+        <tr>
+            <td><a href="/{{category}}/{{dash.link}}/">{{ dash.name }}</a></td>
+            <td>{{ dash.description }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endfor %}
+
+{% endblock %}

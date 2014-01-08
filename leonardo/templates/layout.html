@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/leonardo.css">
+        <script src="/static/js/jquery-1.7.2.min.js"></script>
+        <script src="/static/js/jquery-ui-1.10.0.custom.min.js"></script>
+        <script src="/static/js/jquery.datetimepicker.js"></script>
+        <script src="/static/js/jquery-ui-sliderAccess.js"></script>
+        <script src="/static/js/jquery.cookie.js"></script>
+        <script src="/static/js/selectdate.js"></script>
+        <script src="/static/js/bootstrap-twipsy.js"></script>
+        <script src="/static/js/bootstrap-scrollspy.js"></script>
+        <script src="/static/js/bootstrap-dropdown.js"></script>
+        <script src="/static/js/bootstrap-tooltip.js"></script>
+        <script src="/static/js/bootstrap-popover.js"></script>
+        <script src="/static/js/bootstrap-typeahead.js"></script>
+        <title>{{ view.dash_title }}</title>
+    </head>
+    <body>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="brand" href="/">{{ view.dash_title }}</a>
+                    <ul class="nav">
+                    {% for category in view.top_level %}
+                      <li class="dropdown" id="menu-{{ category }}">
+                            <a href="#" data-toggle="dropdown" href="#menu-{{ category }}" class="dropdown-toggle">{{ category }} <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                            {% for board in view.top_level[category].dashboards() %}
+                                <li><a href="/{{ category }}/{{ board.link }}">{{ board.name }}</a></li>
+                            {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                    <div class="pull-right" style="" class='nav input-append'>
+                        <form id="form-search" name="dashboards" style="margin: 0;" class="form-search" method="get" action="/search">
+                            <div class="input-append">
+                                <input class="span2 search-query" name="dashboard" type="text" placeholder="Dashboard..." data-provide="typeahead" data-items="10" data-source='{{ view.search_elements | safe }}' autocomplete="off" />
+                                <button class="btn btn-primary" style="margin-left: -5px; padding-bottom: 5px;" type="submit" value"submit" /><i class="icon-search icon-white"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>            
+            </div>
+
+        </div>        
+        <div class="container-fluid">
+             {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>
