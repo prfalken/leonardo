@@ -1,6 +1,6 @@
 # Leonardo
 
-A Graphite Dashboard, massively inspired by the excellent [ripienaar](https://github.com/ripienaar)'s [GDash](https://github.com/ripienaar/gdash)
+A Graphite Dashboard, massively inspired by the excellent [GDash](https://github.com/ripienaar/gdash) made by [ripienaar](https://github.com/ripienaar)
 
 It was rewritten in Python.
 
@@ -14,7 +14,13 @@ Differences with Gdash :
 Configuration
 -------------
 
-This dashboard is a Flask application. Have a look at [this documentation](http://flask.pocoo.org/docs/deploying/) if you want to deploy it.
+This dashboard is a Flask application. Have a look at [this documentation](http://flask.pocoo.org/docs/deploying/) if you want to deploy it in a production environment.
+
+If you just want to play with it, simply install dependencies and launch the run script:
+
+    # pip install pyyaml
+    # pip install flask
+    # ./run.py
 
 Main configuration example is included in config/leonardo.yaml.example, you should rename it to
 leonardo.yaml and adjust the main options here.
