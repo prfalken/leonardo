@@ -9,8 +9,6 @@ Differences with Gdash :
 - Ability to display multiple dashboards on a single page for comparison
 - Zoom in/out
 
-See the _sample_ directory for a sample dashboard configuration.
-
 ![Sample dashboard](https://github.com/prfalken/leonardo/raw/master/sample/dashboard.jpg)
 
 Configuration
@@ -21,8 +19,9 @@ This dashboard is a Flask application. Have a look at [this documentation](http:
 Main configuration example is included in config/leonardo.yaml.example, you should rename it to
 leonardo.yaml and adjust the main options here.
 
-Two config options are mandatory in leonardo.yaml :
-    * grapite: put your Graphite server url there
+Two config options are mandatory in leonardo.yaml:
+    
+    * graphite: put your Graphite server url there
     * templatedir: directory where your dashboards are.
 
 and additional options:
@@ -50,29 +49,29 @@ You need a file called _dash.yaml_ for each dashboard, here is a sample:
 Then create descriptions in files like _cpu.graph_ in the same directory, in pure YAML.
 here is a sample:
 
-title: Combined CPU Usage
-vtitle: percent
-area: stacked
-description: The combined CPU usage
-
-fields:
-    iowait: 
-        color: red
-        alias: IO Wait
-        data: sumSeries(collectd.server-1.cpu.*.cpu.wait.value)
-        cacti_style: si
-
-    system:
-        color: orange
-        alias: System
-        data: sumSeries(collectd.server-1.cpu.*.cpu.system.value)
-        cacti_style: si
-
-    user:
-        color: 4169E1
-        alias: User
-        data: sumSeries(collectd.server.cpu.*.cpu.user.value)
-        cacti_style: si
+    title: Combined CPU Usage
+    vtitle: percent
+    area: stacked
+    description: The combined CPU usage
+   
+    fields:
+        iowait: 
+            color: red
+            alias: IO Wait
+            data: sumSeries(collectd.server-1.cpu.*.cpu.wait.value)
+            cacti_style: si
+   
+        system:
+            color: orange
+            alias: System
+            data: sumSeries(collectd.server-1.cpu.*.cpu.system.value)
+            cacti_style: si
+   
+        user:
+            color: 4169E1
+            alias: User
+            data: sumSeries(collectd.server.cpu.*.cpu.user.value)
+            cacti_style: si
 
 Template Directory Layout
 --------------------------
@@ -156,16 +155,16 @@ by using the following url structure:
 
 This is how it looks :
 
-![fullscreen dashboard](https://github.com/prfalken/leonardo/raw/master/sample/dashboard-full.jpg)
+![fullscreen dashboard](https://github.com/prfalken/leonardo/raw/master/sample/dashboard-full.png)
 
 
 
-Include graphs from other dashboard?
+Include graphs from other dashboard
 ------------------------------------
 
 This option from Gdash is not yet implemented in Leonardo.
 
-Load dashboard properties from a external YAML file? 
+Load dashboard properties from a external YAML file 
 ----------------------------------------------------
 
 If you got a set of common properties that you want to reuse in the 
@@ -204,13 +203,15 @@ Multiple Dashboards
 You can use regexps in the search box to display multiple Dashboards at the same time.
 That way you can compare dashboards with each other, which is very useful for instance when comparing several server metrics :
 
-![Multiple Dashboards](https://github.com/prfalken/leonardo/raw/master/sample/multiple.jpg)
+![Multiple Dashboards](https://github.com/prfalken/leonardo/raw/master/sample/multiple.png)
 
 
-- Zoom in/out
+Zoom in/out
+-----------
 
 Using the + / -  buttons on a dashboard, you can zoom in or out. The number of columns will adapt automatically :
 
-![Zoomed in](https://github.com/prfalken/leonardo/raw/master/sample/zoomed-in.jpg)
-![Zoomed out](https://github.com/prfalken/leonardo/raw/master/sample/zoomed-out.jpg)
+![Zoomed in](https://github.com/prfalken/leonardo/raw/master/sample/zoomed-in.png)
+
+![Zoomed out](https://github.com/prfalken/leonardo/raw/master/sample/zoomed-out.png)
 
