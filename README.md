@@ -198,7 +198,7 @@ Example _black-theme.yml_:
         vertical_mark_color: "#330000"
 
 
-Additionnal Features on Leonardo
+Additional Features on Leonardo
 --------------------------------
 
 I wrote Leonardo to be able to add features that I find useful in a production environment :
