@@ -1,0 +1,28 @@
+title: Memory Usage
+vtitle: Bytes
+area: stacked
+
+fields:
+    used:
+        color: red
+        alias: Used
+        data: sumSeries(collectd.server-1.memory.memory.used.value)
+        cacti_style: si
+
+    buffered:
+        color: purple
+        alias: Buffered
+        data: sumSeries(collectd.server-1.memory.memory.buffered.value)
+        cacti_style: si
+
+    cached:
+        color: blue
+        alias: Cached
+        data: sumSeries(collectd.server-1.memory.memory.cached.value)
+        cacti_style: si
+
+    free:
+        color: green
+        alias: Free
+        data: sumSeries(collectd.server-1.memory.memory.free.value)
+        cacti_style: si

@@ -1,0 +1,16 @@
+title: Disk [/dev/sda] Operations
+vtitle: Ops/s
+description: Disk Operations for server-1
+
+
+fields:
+    read:
+        color: blue
+        data: sumSeries(collectd.server-1.disk.sda.disk_ops.read)
+        cacti_style: si
+
+    write:
+        color: green
+        data: sumSeries(collectd.server-1.disk.sda.disk_ops.write)
+        cacti_style: si
+

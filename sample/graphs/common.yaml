@@ -1,0 +1,5 @@
+graph_properties:
+    linewidth: 0.8
+    area_alpha: 0.7
+    timezone:    Europe/Paris
+    hide_legend: false

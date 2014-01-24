@@ -1,0 +1,19 @@
+title: Network Usage eth0
+vtitle: Bits
+area: first
+
+fields:
+    up_eth0:
+        color: blue
+        alias: Out
+        scale: '8'
+        data: sumSeries(collectd.server-1.interface.if_octets.eth0.tx)
+        cacti_style: si
+
+    down_eth0:
+        color: green
+        alias: Down
+        scale: '8'
+        data: sumSeries(collectd.server-1.interface.if_octets.eth0.rx)
+        cacti_style: si
+

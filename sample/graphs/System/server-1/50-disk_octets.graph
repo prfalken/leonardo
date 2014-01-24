@@ -1,0 +1,16 @@
+title: Disk [/dev/sda] Octets
+vtitle: Bytes/s
+description: Disk Merged for server-1
+
+
+fields:
+    read:
+        color: blue
+        data: sumSeries(collectd.server-1.disk.sda.disk_octets.read)
+        cacti_style: si
+
+    write:
+        color: green
+        data: sumSeries(collectd.server-1.disk.sda.disk_octets.write)
+        cacti_style: si
+

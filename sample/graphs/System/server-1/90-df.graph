@@ -1,0 +1,19 @@
+title: Disk Usage
+vtitle: "%"
+description: Disk Usage for server-1
+area: stacked
+linewidth: 0.8
+area_alpha: 0.7
+
+fields:
+    used:
+        color: orange
+        data: asPercent(collectd.server-1.df.df.data.used, sumSeries(collectd.server-1.df.df.data.*))
+        cacti_style: si
+
+    free:
+        color: green
+        data: asPercent(collectd.server-1.df.df.data.free, sumSeries(collectd.server-1.df.df.data.*))
+        cacti_style: si
+
+

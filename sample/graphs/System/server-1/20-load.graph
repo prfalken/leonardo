@@ -1,0 +1,23 @@
+title: Load Average
+vtitle: Load
+area: first
+description: Load Average for server-1
+
+fields:
+    short:
+        color: yellow
+        alias: 1 min avg
+        data: sumSeries(collectd.server-1.load.load.shortterm)
+        cacti_style: si
+
+    mid:
+        color: orange
+        alias: 5 min avg
+        data: sumSeries(collectd.server-1.load.load.midterm)
+        cacti_style: si
+
+    long:
+        color: red
+        alias: 15 min avg
+        data: sumSeries(collectd.server-1.load.load.longterm)
+        cacti_style: si

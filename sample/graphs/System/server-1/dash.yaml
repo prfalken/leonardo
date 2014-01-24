@@ -1,0 +1,5 @@
+name: Server-1 
+description: System Metrics
+
+include_properties: 
+    - common.yaml
