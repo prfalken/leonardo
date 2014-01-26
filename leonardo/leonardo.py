@@ -27,13 +27,14 @@ class Leonardo:
     def dashboards(self):
         dashboards = []
         for dash in os.listdir(self.dash_templates):
-            yaml_file = os.path.join(self.dash_templates, dash, "dash.yaml")
-            if os.path.exists(yaml_file):
-                with open(yaml_file) as f:
-                    yaml_conf = yaml.load(f.read())
+            if not dash.startswith('.'):
+                yaml_file = os.path.join(self.dash_templates, dash, "dash.yaml")
+                if os.path.exists(yaml_file):
+                    with open(yaml_file) as f:
+                        yaml_conf = yaml.load(f.read())
 
-                yaml_conf.update( { 'category' : self.category, 'link' : dash } ) 
-                dashboards.append(yaml_conf)
+                    yaml_conf.update( { 'category' : self.category, 'link' : dash } ) 
+                    dashboards.append(yaml_conf)
 
         return dashboards
 

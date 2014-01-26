@@ -49,7 +49,7 @@ class View:
         self.top_level = {}
 
         for category in [ name for name in os.listdir(self.graph_templates) 
-                                        if os.path.isdir(os.path.join(self.graph_templates, name)) ]:
+                                        if not name.startswith('.') and os.path.isdir(os.path.join(self.graph_templates, name)) ]:
             
             if os.listdir( os.path.join(self.graph_templates,category) ) != []:                
                 
