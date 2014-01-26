@@ -1,8 +1,12 @@
+#form-search {
+    margin: 5px 0;
+}
+
 img.bordered {
-border: 1px solid #aaa;
--webkit-border-radius: 3px;
--moz-border-radius: 3px;
-border-radius: 3px;
+    border: 1px solid #aaa;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }
 
 img.no-resize {
@@ -16,5 +20,5 @@ img.no-resize {
 }
 
 .td-padded {
-  padding: 3px;
+    padding: 3px;
 }
