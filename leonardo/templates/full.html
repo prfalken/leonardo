@@ -23,7 +23,7 @@
 
 <script>
     $(document).ready(function() {
-        setInterval(reloadDash, <%= @refresh_rate * 1000 %>);
+        setInterval(reloadDash, {{ view.refresh_rate * 1000 }});
     });
     function reloadDash() {
         var now = new Date();
