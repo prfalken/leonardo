@@ -8,6 +8,7 @@ Differences with Gdash :
 - Configuration is in full YAML instead of a DSL.
 - Ability to display multiple dashboards on a single page for comparison
 - Zoom in/out
+- Graph inclusion allows globbing
 
 ![Sample dashboard](https://github.com/prfalken/leonardo/raw/master/sample/dashboard.jpg)
 
@@ -168,7 +169,13 @@ This is how it looks :
 Include graphs from other dashboard
 ------------------------------------
 
-This option from Gdash is not yet implemented in Leonardo.
+You can include the graphs from other dashboard with the include
+property in dash.yaml. You can also use globbing :
+
+    include_graphs:
+    - templates/os.basic
+    - templates/os.nfs
+    - System/Server-*/cpu.graph
 
 Load dashboard properties from a external YAML file 
 ----------------------------------------------------

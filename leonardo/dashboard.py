@@ -1,4 +1,5 @@
 import os, fnmatch
+import glob
 import yaml
 from graph import GraphiteGraph
 
@@ -53,6 +54,21 @@ class Dashboard:
                 with open(yaml_file) as yaml_conf:
                     self.properties.update( yaml.load(yaml_conf) )
 
+        # Graph inclusion
+        include_option = self.properties.get('include_graphs')
+        if not include_option or include_option == "" :
+            graph_includes = []
+        elif type(include_option) is list:
+            graph_includes = include_option
+        elif type(include_option) is str:
+            graph_includes = [include_option]
+        else:
+            raise Exception("Invalid value for include in %s/dash.yaml" % (directory))
+
+        # Expand wildcards with glob, creates list of lists
+        self.graph_includes = [ glob.glob( os.path.join(graph_templates, d) ) for d in graph_includes ]
+        # merge into one big list
+        self.graph_includes = [ item for sublist in self.graph_includes for item in sublist ]
 
 
 
@@ -64,6 +80,10 @@ class Dashboard:
         for graph_filename in current_graphs:
             graph_name = os.path.splitext(graph_filename)[0]
             graphs[graph_name] = os.path.join(directory, graph_filename)
+
+        for graph_filepath in self.graph_includes:
+            graph_name = os.path.splitext(graph_filepath)[0]
+            graphs[graph_name] = graph_filepath
 
         return graphs
 

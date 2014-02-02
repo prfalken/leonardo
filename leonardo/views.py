@@ -171,7 +171,7 @@ def dash(category, dash):
     return resp
 
 
-@app.route('/<category>/<dash>/details/<name>/', methods=['GET', 'POST'])
+@app.route('/<category>/<dash>/details/<path:name>/', methods=['GET', 'POST'])
 def detail(category, dash, name):
 
     options = { 'graph_columns': view.graph_columns }
