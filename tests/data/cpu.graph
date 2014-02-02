@@ -1,0 +1,20 @@
+title: Combined CPU Usage
+vtitle: percent
+area: stacked
+description: The combined CPU usage
+
+fields:
+    iowait: 
+        alias: IO Wait
+        data: sumSeries(collectd.server-1.cpu.*.cpu.wait.value)
+        cacti_style: si
+
+    system:
+        alias: System
+        data: sumSeries(collectd.server-1.cpu.*.cpu.system.value)
+        cacti_style: si
+
+    user:
+        alias: User
+        data: sumSeries(collectd.server-1.cpu.*.cpu.user.value)
+        cacti_style: si

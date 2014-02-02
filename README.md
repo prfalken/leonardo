@@ -23,6 +23,11 @@ If you just want to play with it, simply install dependencies and launch the run
     # pip install flask
     # ./run.py
 
+If you want to run tests:
+
+    # pip install nose
+    # nosetests
+
 Main configuration example is included in config/leonardo.yaml.example, you should rename it to
 leonardo.yaml and adjust the main options here.
 
