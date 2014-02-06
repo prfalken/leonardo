@@ -26,7 +26,7 @@ class Leonardo:
 
     def dashboards(self):
         dashboards = []
-        for dash in os.listdir(self.dash_templates):
+        for dash in sorted(os.listdir(self.dash_templates)):
             if not dash.startswith('.'):
                 yaml_file = os.path.join(self.dash_templates, dash, "dash.yaml")
                 if os.path.exists(yaml_file):
