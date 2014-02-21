@@ -4,10 +4,10 @@ Here is the list of configuration directives you can add in any .graph YAML file
 
 Each .graph file represent a Graph that will be displayed on a dashboard.
 
-Each directive represents an URL Parameter or a Function, as described in Graphite's Documentation: 
+Each directive represents an URL Parameter or a Function, as described in Graphite's Documentation:
 
 
-## Parameters 
+## Parameters
 See the [Graphite Documentation](http://graphite.readthedocs.org/en/1.0/url-api.html) for details on URL API Parameters
 
 ### *title*
@@ -104,7 +104,7 @@ The timezone to convert all data into
 
 ### *linemode*
 Influence how all lines are drawn
-  
+
     linemode: slope
 
 or
@@ -122,6 +122,34 @@ Adjusts the colors for the grid lines
     minor_grid_line_color: "green"
     minor_grid_line_color: "#000"
 
+### *theme*
+
+Used to specify a template from _graphTemplates.conf_ to use for default
+colors and graph styles.
+
+    theme: name_of_theme
+
+### *unique_legend*
+
+Display only unique legend items, removing any duplicates.
+
+### *min_x_step*
+
+Sets the minimum pixel-step to use between datapoints drawn.
+
+### *area_alpha*
+
+Takes a floating point number between 0.0 and 1.0 Sets the alpha (transparency) value of filled areas when using an areaMode
+
+### *logbase*
+
+If set, draws the graph with a logarithmic scale of the specified base (e.g. 10 for common logarithm)
+
+### *vtitle_right*
+
+In dual Y-axis mode, sets the title of the right Y-Axis (See: vtitle)
+
+
 
 ## Functions
 See the [Graphite Documentation](http://graphite.readthedocs.org/en/1.0/functions.html) for details on Functions
@@ -134,9 +162,9 @@ The first argument - _iowait_ above - is the field name and should be unique for
 The main data for the field, this can be anything graphite will accept as a target.  There are a number of properties that you can apply to this data so you can generally keep this pretty simple even for derived data etc.
 
     fields:
-          foo: 
+          foo:
                data: fqdn.load.load
-          load: 
+          load:
                data: sumSeries(*.load.load)
 
 
