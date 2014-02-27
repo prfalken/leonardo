@@ -26,3 +26,9 @@ img.no-resize {
 .td-padded {
     padding: 3px;
 }
+
+.dropdown-menu {
+    max-height:     600px;
+    overflow:       hidden;
+    overflow-y:     auto;
+}
