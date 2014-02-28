@@ -1,6 +1,5 @@
 import unittest
 import urlparse
-import urllib
 
 from leonardo import graph
 

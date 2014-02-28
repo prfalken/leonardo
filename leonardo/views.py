@@ -1,10 +1,9 @@
-from flask import request, render_template, flash, g, session, redirect, url_for, make_response, redirect
+from flask import request, render_template, make_response, redirect
 import os
 import urllib
 import json
 import re
 from time import strftime, localtime
-import copy
 import config
 from . import app
 import leonardo
@@ -225,14 +224,13 @@ def detail(category, dash, name):
 
 @app.route('/search/')
 def search():
-    search_string = request.args.get('dashboard', '')
+    search_string = request.args.get('dashboard')
     compare_with  = request.args.get('compare_with')
 
     try:
         category, dashboard = search_string.split('/', 1)
     except ValueError:
         category = None
-        dashboard = search_string
     
     # try to expand search regexp
     dashboard_list = []
@@ -241,7 +239,7 @@ def search():
     for k in view.top_level:
         for d in view.top_level[k].dashboards():
             category_and_name = '%s/%s' % (d['category'], d['name'])
-            if re.match(search_string, category_and_name, re.IGNORECASE):
+            if search_string and re.match(search_string, category_and_name, re.IGNORECASE):
                 dashboard_list.append(category_and_name)
 
     if len(dashboard_list) == 1:
