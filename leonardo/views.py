@@ -201,7 +201,7 @@ def detail(category, dash, name):
     for e in view.intervals:
         graph = dashboard.graph_by_name(name, options)
         title = "%s - %s" % ( graph['graphite'].properties['title'] , e[1] )
-        new_props = { 'from': e[0] , 'title': title, 'width': zoomed_width, 'height': zoomed_height }
+        new_props = { 'from': e[0] , 'nice_from': e[1] ,'title': title, 'width': zoomed_width, 'height': zoomed_height }
         graph['graphite'].properties.update( new_props )
         graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
         graphs.append(graph)

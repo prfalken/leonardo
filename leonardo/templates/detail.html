@@ -10,22 +10,20 @@
   </div>
 </div>
 
-
 <div>
   <table align=center>
+    {% for graph in graphs %}
     <tr>
-      {% for graph in graphs %}
       <td class="td-padded">
-          {% include 'graph.html' %}
+          <div>
+            {% include 'graph.html' %}
+          </div>
+          <p>
+            <b>{{ graph.graphite.properties.nice_from }}</b>
+          </p>
       </td>
-      {% if loop.index is divisibleby dashboard.graph_columns %}
-        </tr>
-        <tr>
-      {% endif %}
-      {% endfor %}
-      </span>
     </tr>
+    {% endfor %}
   </table>
-
 </div>
 {% endblock %}
