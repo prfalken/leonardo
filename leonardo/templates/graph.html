@@ -1,8 +1,8 @@
 {% if not omit_link %}
-<a href="{{ [ view.prefix, dashboard.category, dashboard.short_name , 'details', graph.name ] | join('/') }}">
+<a href="{{ url_for("detail", category=dashboard.category,
+                    dash=dashboard.short_name, name=graph.name) }}">
 {% endif %}
     <img {% if dashboard.no_resize %}class="no-resize"{% else%}class="bordered"{% endif %} src="{{ view.graphite_render }}?{{ graph.graphite.url() }}" title="{{ graph.graphite.title }}"  data-content="{{ graph.graphite.description }}"/>
 {% if not omit_link %}
 </a>
 {% endif %}
-

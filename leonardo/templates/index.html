@@ -13,7 +13,11 @@
     <tbody>
         {% for dash in dashboards[category]%}
         <tr>
-            <td><a href="/{{category}}/{{dash.link}}/">{{ dash.name }}</a></td>
+            <td>
+                <a href="{{ url_for("dash", category=category, dash=dash.link) }}">
+                    {{ dash.name }}
+                </a>
+            </td>
             <td>{{ dash.description }}</td>
         </tr>
         {% endfor %}

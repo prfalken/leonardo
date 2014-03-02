@@ -3,8 +3,8 @@
     <head>
         <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bootstrap.css") }}">
         <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/jquery.datetimepicker.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/leonardo.css">
+        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/jquery.datetimepicker.css") }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/leonardo.css") }}">
         <script src="{{ url_for("static", filename="js/jquery-1.7.2.min.js") }}"></script>
         <script src="{{ url_for("static", filename="js/jquery-ui-1.10.0.custom.min.js") }}"></script>
         <script src="{{ url_for("static", filename="js/jquery.datetimepicker.js") }}"></script>
@@ -23,14 +23,18 @@
         <div class="navbar">
             <div class="navbar-inner">
                 <div class="container-fluid">
-                    <a class="brand" href="/">{{ view.dash_title }}</a>
+                    <a class="brand" href="{{ url_for("index") }}">
+                        {{ view.dash_title }}
+                    </a>
                     <ul class="nav">
                     {% for category in view.top_level %}
                       <li class="dropdown" id="menu-{{ category }}">
                             <a href="#" data-toggle="dropdown" href="#menu-{{ category }}" class="dropdown-toggle">{{ category }} <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                             {% for board in view.top_level[category].dashboards() %}
-                                <li><a href="/{{ category }}/{{ board.link }}">{{ board.name }}</a></li>
+                                <li><a href="{{ url_for("dash", category=category,
+                                    dash=board.link) }}">{{ board.name }}</a>
+                                </li>
                             {% endfor %}
                             </ul>
                         </li>

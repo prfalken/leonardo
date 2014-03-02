@@ -1,6 +1,16 @@
 <ul class="nav nav-pills">
   {% for options in view.interval_filters %}
-    <li {{' class="active"' if options['from'] == dashboard.graph_from }}>{{ view.link_to_interval(options, dashboard.category, dashboard.short_name)|safe }}</li>
+  <li {{' class="active"' if options['from'] == dashboard.graph_from }}>
+    {% if "to" not in options %}
+      <a href="{{ url_for("dash", category=dashboard.category,
+          dash=dashboard.short_name, from=options["from"], to="now") }}">
+    {% else %}
+      <a href="{{ url_for("dash", category=dashboard.category,
+          dash=dashboard.short_name, from=options["from"], to=options["to"]) }}">
+    {% endif %}
+    {{ options["label"] }}
+    </a>
+  </li>
   {% endfor %}
   <li><a id="toggleDateTimePicker" href="#">Select Date</a></li>
 </ul>
