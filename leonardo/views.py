@@ -68,20 +68,6 @@ class View:
             elements_string += '"%s",' % item
         self.search_elements = "[%s]" % elements_string[:-1]
 
-
-
-    def uri_to_interval(self, options, category, dash):
-        parameters = urllib.urlencode( {'from': options['from'], 'to': options['to']} )
-        uri = "%s/%s/%s/?" % (self.prefix, category, dash)
-        # uri.query = request.query_string unless request.query_string.empty? 
-        return uri + parameters
-
-    def link_to_interval(self, options, category, dash):
-        if not options.get('to'):
-            options['to'] = "now"
-        uti = self.uri_to_interval(options, category, dash)
-        return """<a href="%s">%s</a>""" % ( uti, options['label'] )
-
     def fmt_for_select_date(self, date, default):
         result = ""        
         try:
