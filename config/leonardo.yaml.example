@@ -2,6 +2,9 @@ graphite: http://graphite.example.com
 templatedir: graphs
 #:username: admin
 #:password: secret
+logging:
+  - syslog:
+      level: info
 options:
   title: "Leonardo"
   prefix: ""

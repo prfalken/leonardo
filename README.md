@@ -235,3 +235,45 @@ Using the + / -  buttons on a dashboard, you can zoom in or out. The number of c
 
 ![Zoomed out](https://github.com/prfalken/leonardo/raw/master/sample/zoomed-out.png)
 
+Logging
+-------
+
+The logging is configurable via options in the `config/leonardo.yaml`. There are 
+options for logging to stdout, files, syslog, and email.
+
+Examples:
+
+* Logging to stdout
+```yaml
+logging:
+  - stdout:
+      level: debug
+```
+
+* Logging to a file
+```yaml
+logging:
+  - file:
+     filename: /path/to/log/file
+     level: info
+```
+
+* Logging to syslog
+```yaml
+logging:
+  - syslog:
+      level: debug
+```
+
+* Logging to email
+```yaml
+logging:
+  - email:
+     mailhost: example.com
+     fromaddr: server-error@example.com
+     toaddrs:
+       - admin1@example.com
+       - admin2@example.com
+     subject: example message
+     level: error
+```

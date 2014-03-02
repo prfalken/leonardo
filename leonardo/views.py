@@ -7,6 +7,8 @@ import config
 from . import app
 import leonardo
 from graph import GraphiteGraph
+import logging
+from log import LoggingException
 
 class View:
     def __init__(self):
@@ -86,7 +88,7 @@ def get_dashboard_from_category(category, dash, options):
     if view.top_level.get(category):
         dashboard = view.top_level[category].dashboard(dash, options)
     else:
-        raise Exception('Category %s does not exist' % category )
+        raise LoggingException('Category %s does not exist' % category )
 
     return dashboard
 
@@ -118,8 +120,14 @@ def zoom(request, dashboard):
 
 @app.route('/')
 def index():
+
+    app.logger.debug(
+        "responing to %s method on %s route" %
+        (request.method, request.url)
+    )
+
     if view.top_level == {}:
-        print "No dashboards found in the templates directory"
+        app.logger.warning("No dashboards found in the templates directory")
     dashboards_to_display = {}
     for k in view.top_level:
         dashboards_to_display[k] = [ d for d in view.top_level[k].dashboards() ]
@@ -129,6 +137,11 @@ def index():
 
 @app.route('/<category>/<dash>/', methods=['GET', 'POST'])
 def dash(category, dash, format='standard'):
+
+    app.logger.debug(
+        "responing to %s method on %s route" %
+        (request.method, request.url)
+    )
 
     options = { 'graph_columns': view.graph_columns }
     # Set a default time range, being -1 hour
@@ -175,6 +188,11 @@ def dash(category, dash, format='standard'):
 
 @app.route('/<category>/<dash>/details/<path:name>/', methods=['GET', 'POST'])
 def detail(category, dash, name, format='standard'):
+
+    app.logger.debug(
+        "responing to %s %s" %
+        (request.method, request.url)
+    )
 
     options = { 'graph_columns': view.graph_columns }
 
@@ -265,6 +283,12 @@ def json_detailed(category, dash_name, graph_name):
 
 @app.route('/search/')
 def search():
+
+    app.logger.debug(
+        "responing to %s %s" %
+        (request.method, request.url)
+    )
+    
     search_string = request.args.get('dashboard')
     compare_with  = request.args.get('compare_with')
 
@@ -285,6 +309,7 @@ def search():
 
     if len(dashboard_list) == 1:
         category, name = dashboard_list[0].split('/')
+        app.logger.debug("redirecting to /%s/%s"  % (category, name))
         return redirect("/%s/%s" % (category, name))
     else:
         return multiple(dashboard_list)
@@ -292,6 +317,12 @@ def search():
 
 @app.route('/multiple/')
 def multiple(asked_dashboards = None):
+
+    app.logger.debug(
+        "responing to %s %s" %
+        (request.method, request.url)
+    )
+    
     options = {}
     # Set a default time range, being -1 hour
     t_until = "now"
@@ -326,6 +357,7 @@ def multiple(asked_dashboards = None):
 
 @app.errorhandler(404)
 def not_found(error):
+  app.logger.debug("404")
   return render_template('404.html'), 404
 
 
