@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bootstrap.css") }}">
+</head>
+
+
+<div class="container">
+    
+    <div class="alert alert-error" style="text-align: center; margin-top:50px">
+
+        <h2>There was a problem displaying this page.</h2>
+        <br/>
+        <br/>
+        <div class="alert-actions">
+            <a class="btn small" href="javascript:history.back()">Go back</a> <a class="btn small" href="/">Home Page</a>
+        </div>
+        <br/>
+        <br/>
+        <p>... or look for another Dashboard</p>
+
+        <div style:"" class="nav input-append">
+            <form id="form-search" name="dashboards" class="form-search" method="get" action="/search">
+                <div class="input-append">
+                    <input class="search-query" name="dashboard" type="text" placeholder="Dashboard..." required />
+                    <button class="btn btn-primary" type="submit" value"submit" /><i class="icon-search icon-white"></i></button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+</html>
