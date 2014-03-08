@@ -100,16 +100,19 @@ def zoom(request, dashboard):
     zoomed_width, zoomed_height = dashboard.properties['graph_width'], dashboard.properties['graph_height']
     zoom = request.form.get('zoom')
     if zoom == "zoom-in":
-        zoomed_width = cookie_size['width'] * 1.5
-        zoomed_height = cookie_size['height'] * 1.5
-        if dashboard.properties['graph_columns'] > 1:
+        dashboard.properties['graph_width'] = cookie_size['width'] * 1.5
+        dashboard.properties['graph_height'] = cookie_size['height'] * 1.5
+        if cookie_size['graph_columns'] > 1:
             dashboard.properties['graph_columns'] = cookie_size['graph_columns'] - 1
+        else:
+            dashboard.properties['graph_columns'] = cookie_size['graph_columns']
+
     if zoom == "zoom-out":
-        zoomed_width  = cookie_size['width'] / 1.5
-        zoomed_height = cookie_size['height'] / 1.5
+        dashboard.properties['graph_width']  = cookie_size['width'] / 1.5
+        dashboard.properties['graph_height'] = cookie_size['height'] / 1.5
         dashboard.properties['graph_columns'] = cookie_size['graph_columns'] + 1
 
-    return zoomed_width, zoomed_height
+    return dashboard
 
 
 
@@ -139,18 +142,16 @@ def dash(category, dash):
     options['from'] = t_from
     options['until'] = t_until
 
-
     # Build Dashboard
     dashboard = get_dashboard_from_category(category, dash, options)
 
     args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in request.args.items() ] )
 
-    # Retrieve zoomed values if necessary
-    zoomed_width, zoomed_height = zoom(request, dashboard)
+    # Retrieve zoomed values if necessary, and update dashboard with new width and height properties
+    dashboard = zoom(request, dashboard)
 
     # Build dashboard's graphs
     graphs = dashboard.graphs()
-
 
     if request.args.get('full'):
         resp = make_response( render_template("full.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string ) )
@@ -177,14 +178,14 @@ def detail(category, dash, name):
     # Build Dashboard
     dashboard = get_dashboard_from_category(category, dash, options)
 
-    # Retrieve zoomed values if necessary
-    zoomed_width, zoomed_height = zoom(request, dashboard)
+    # Retrieve zoomed values if necessary, and update dashboard with new width and height properties
+    dashboard = zoom(request, dashboard)
 
     graphs = []
     for e in view.intervals:
         graph = dashboard.graph_by_name(name, options)
         title = "%s - %s" % ( graph['graphite'].properties['title'] , e[1] )
-        new_props = { 'from': e[0] , 'nice_from': e[1] ,'title': title, 'width': zoomed_width, 'height': zoomed_height }
+        new_props = { 'from': e[0] , 'nice_from': e[1] ,'title': title }
         graph['graphite'].properties.update( new_props )
         graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
         graphs.append(graph)
@@ -192,8 +193,8 @@ def detail(category, dash, name):
     
     resp = make_response( render_template("detail.html", view = view, dashboard = dashboard.properties, graphs = graphs, omit_link = True) )
 
-    resp.set_cookie( 'graph_topo', json.dumps( { 'width': zoomed_width, 
-                                                 'height': zoomed_height, 
+    resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
+                                                 'height': dashboard.properties['graph_height'],
                                                  'graph_columns' : dashboard.properties['graph_columns'] 
                                                 } 
                                             ) 
