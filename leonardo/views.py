@@ -1,4 +1,4 @@
-from flask import request, render_template, make_response, redirect
+from flask import request, render_template, make_response, redirect, Response
 import os
 import json
 import re
@@ -128,7 +128,7 @@ def index():
 
 
 @app.route('/<category>/<dash>/', methods=['GET', 'POST'])
-def dash(category, dash):
+def dash(category, dash, format='standard'):
 
     options = { 'graph_columns': view.graph_columns }
     t_from = t_until = None
@@ -153,6 +153,9 @@ def dash(category, dash):
     # Build dashboard's graphs
     graphs = dashboard.graphs()
 
+    if format == 'json':
+        return graphs
+
     if request.args.get('full'):
         resp = make_response( render_template("full.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string ) )
     else:
@@ -171,7 +174,7 @@ def dash(category, dash):
 
 
 @app.route('/<category>/<dash>/details/<path:name>/', methods=['GET', 'POST'])
-def detail(category, dash, name):
+def detail(category, dash, name, format='standard'):
 
     options = { 'graph_columns': view.graph_columns }
 
@@ -190,6 +193,8 @@ def detail(category, dash, name):
         graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
         graphs.append(graph)
 
+    if format == 'json':
+        return graphs
     
     resp = make_response( render_template("detail.html", view = view, dashboard = dashboard.properties, graphs = graphs, omit_link = True) )
 
@@ -203,6 +208,22 @@ def detail(category, dash, name):
     return resp
 
 
+# These routes return graphs Graphite URL + Leonardo properties as a JSON list of dictionaries
+# They can be used as a gateway to render graphs with toolkits such as Rickshaw, HighCharts ...
+@app.route('/api/<category>/<dash_name>/')
+def json_dashboard(category, dash_name):
+
+    graphs = dash(category, dash_name, format='json')
+    graph_list = json.dumps( [ g['graphite'].get_graph_spec() for g in graphs ] )
+    return Response(graph_list)
+
+
+@app.route('/api/<category>/<dash_name>/details/<path:graph_name>/')
+def json_detailed(category, dash_name, graph_name):
+
+    graphs = detail(category, dash_name, graph_name, format='json')
+    graph_list = json.dumps( [ g['graphite'].get_graph_spec() for g in graphs ] )
+    return Response(graph_list)
 
 
 

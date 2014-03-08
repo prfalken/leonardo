@@ -78,6 +78,10 @@ class GraphiteGraph:
             self.target_order.append(field)
 
 
+    def get_graph_spec(self):
+        return { 'url': self.url() + '&format=json' , 'properties': self.properties }
+
+
     def url(self):
         properties = self.properties
         dual_axis = False
