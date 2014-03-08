@@ -1,6 +1,5 @@
 from flask import request, render_template, make_response, redirect
 import os
-import urllib
 import json
 import re
 from time import strftime, localtime
@@ -83,6 +82,37 @@ class View:
 view = View()
 
 
+def get_dashboard_from_category(category, dash, options):
+    if view.top_level.get(category):
+        dashboard = view.top_level[category].dashboard(dash, options)
+    else:
+        raise Exception('Category %s does not exist' % category )
+
+    return dashboard
+
+
+def zoom(request, dashboard):
+    cookie_size = {}
+
+    if request.cookies.get('graph_topo'):
+        cookie_size = json.loads(request.cookies["graph_topo"])
+
+    zoomed_width, zoomed_height = dashboard.properties['graph_width'], dashboard.properties['graph_height']
+    zoom = request.form.get('zoom')
+    if zoom == "zoom-in":
+        zoomed_width = cookie_size['width'] * 1.5
+        zoomed_height = cookie_size['height'] * 1.5
+        if dashboard.properties['graph_columns'] > 1:
+            dashboard.properties['graph_columns'] = cookie_size['graph_columns'] - 1
+    if zoom == "zoom-out":
+        zoomed_width  = cookie_size['width'] / 1.5
+        zoomed_height = cookie_size['height'] / 1.5
+        dashboard.properties['graph_columns'] = cookie_size['graph_columns'] + 1
+
+    return zoomed_width, zoomed_height
+
+
+
 @app.route('/')
 def index():
     if view.top_level == {}:
@@ -111,30 +141,12 @@ def dash(category, dash):
 
 
     # Build Dashboard
-    if view.top_level.get(category):
-        dashboard = view.top_level[category].dashboard(dash, options)
-
-    else:
-        raise Exception('Category %s does not exist' % category )
+    dashboard = get_dashboard_from_category(category, dash, options)
 
     args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in request.args.items() ] )
 
-
-    # ZOOM 
-    zoom = request.form.get('zoom')
-
-    if request.cookies.get('graph_topo'):
-        cookie_size = json.loads(request.cookies["graph_topo"])
-
-        if zoom == "zoom-in":
-            dashboard.properties['graph_width']   = cookie_size['width'] * 1.5
-            dashboard.properties['graph_height']  = cookie_size['height'] * 1.5
-            if dashboard.properties['graph_columns'] > 1:
-                dashboard.properties['graph_columns'] = cookie_size['graph_columns'] - 1 
-        if zoom == "zoom-out":
-            dashboard.properties['graph_width']   = cookie_size['width'] / 1.5
-            dashboard.properties['graph_height']  = cookie_size['height'] / 1.5
-            dashboard.properties['graph_columns'] = cookie_size['graph_columns'] + 1
+    # Retrieve zoomed values if necessary
+    zoomed_width, zoomed_height = zoom(request, dashboard)
 
     # Build dashboard's graphs
     graphs = dashboard.graphs()
@@ -156,32 +168,17 @@ def dash(category, dash):
     return resp
 
 
+
 @app.route('/<category>/<dash>/details/<path:name>/', methods=['GET', 'POST'])
 def detail(category, dash, name):
 
     options = { 'graph_columns': view.graph_columns }
-    cookie_size = {}
 
-    if view.top_level.get(category):
-        dashboard = view.top_level[category].dashboard(dash, options)
-    else:
-        raise Exception('Category %s does not exist' % category )
+    # Build Dashboard
+    dashboard = get_dashboard_from_category(category, dash, options)
 
-    if request.cookies.get('graph_topo'):
-        cookie_size = json.loads(request.cookies["graph_topo"])
-
-    # ZOOM 
-    zoomed_width, zoomed_height = dashboard.properties['graph_width'], dashboard.properties['graph_height']
-    zoom = request.form.get('zoom')
-    if zoom == "zoom-in":
-        zoomed_width = cookie_size['width'] * 1.5
-        zoomed_height = cookie_size['height'] * 1.5
-        if dashboard.properties['graph_columns'] > 1:
-            dashboard.properties['graph_columns'] = cookie_size['graph_columns'] - 1             
-    if zoom == "zoom-out":
-        zoomed_width  = cookie_size['width'] / 1.5
-        zoomed_height = cookie_size['height'] / 1.5
-        dashboard.properties['graph_columns'] = cookie_size['graph_columns'] + 1 
+    # Retrieve zoomed values if necessary
+    zoomed_width, zoomed_height = zoom(request, dashboard)
 
     graphs = []
     for e in view.intervals:
