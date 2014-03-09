@@ -1,8 +1,13 @@
-{% if not omit_link %}
+{% if links_to == 'detail' %}
 <a href="{{ url_for("detail", category=dashboard.category,
                     dash=dashboard.short_name, name=graph.name) }}">
+
+{% elif links_to == 'single' %}
+<a href="{{ url_for("single", category=dashboard.category,
+                    dash=dashboard.short_name, name=graph.name, from=graph.graphite.properties.from, to=graph.graphite.properties.to ) }}">
+
 {% endif %}
     <img {% if dashboard.no_resize %}class="no-resize"{% else%}class="bordered"{% endif %} src="{{ view.graphite_render }}?{{ graph.graphite.url() }}" title="{{ graph.graphite.title }}"  data-content="{{ graph.graphite.description }}"/>
-{% if not omit_link %}
+{% if links_to %}
 </a>
 {% endif %}

@@ -157,9 +157,9 @@ def dash(category, dash, format='standard'):
         return graphs
 
     if request.args.get('full'):
-        resp = make_response( render_template("full.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string ) )
+        resp = make_response( render_template("full.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to=None) )
     else:
-        resp = make_response( render_template("dashboard.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string ) )
+        resp = make_response( render_template("dashboard.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to='detail' ) )
 
     resp.set_cookie( 'interval', json.dumps( { 'from': t_from, 'until': t_until } ) )
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'], 
@@ -196,7 +196,7 @@ def detail(category, dash, name, format='standard'):
     if format == 'json':
         return graphs
     
-    resp = make_response( render_template("detail.html", view = view, dashboard = dashboard.properties, graphs = graphs, omit_link = True) )
+    resp = make_response( render_template("detail.html", view = view, dashboard = dashboard.properties, graphs = graphs, links_to="single") )
 
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
                                                  'height': dashboard.properties['graph_height'],
@@ -206,6 +206,43 @@ def detail(category, dash, name, format='standard'):
     )
 
     return resp
+
+
+
+@app.route('/<category>/<dash>/single/<path:name>/', methods=['GET', 'POST'])
+def single(category, dash, name):
+
+    # Set default width of a single graph to <default nb columns> times <default width>
+    single_width = view.graph_columns * view.graph_width
+    # Set default height of a single graph to twice the <default height>
+    single_height = 2 * view.graph_height
+
+    cookie_date = json.loads(request.cookies["interval"])
+    t_from = request.args.get( 'from', cookie_date['from'] ) or "-1hour"
+    t_until = request.args.get( 'to', cookie_date['until'] ) or "now"
+
+    # Get dashboard where the graph comes from
+    dashboard = get_dashboard_from_category(category, dash, options={})
+
+    # Retrieve zoomed values if necessary, and update dashboard with new width and height properties
+    dashboard = zoom(request, dashboard)
+
+    # get the graph
+    graph = dashboard.graph_by_name(name, options={})
+    graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
+    new_props = { 'from': t_from, 'until': t_until, 'width': single_width, 'height': single_height }
+    graph['graphite'].properties.update( new_props )
+
+    resp = make_response( render_template("single.html", view = view, dashboard = dashboard.properties, graph = graph, links_to=None) )
+    resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
+                                                 'height': dashboard.properties['graph_height'],
+                                                }
+                                            )
+    )
+
+
+    return resp
+
 
 
 # These routes return graphs Graphite URL + Leonardo properties as a JSON list of dictionaries

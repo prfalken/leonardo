@@ -1,12 +1,12 @@
 <ul class="nav nav-pills">
   {% for options in view.interval_filters %}
-  <li {{" class=active" if options['from'] == dashboard.graph_from }}>
+  <li {{" class=active" if options['from'] == graph.graphite.properties.from }}>
     {% if "to" not in options %}
-      <a href="{{ url_for("dash", category=dashboard.category,
-          dash=dashboard.short_name, from=options["from"], to="now") }}">
+      <a href="{{ url_for("single", category=dashboard.category,
+          dash=dashboard.short_name, name=graph.name ,from=options["from"], to="now") }}">
     {% else %}
-      <a href="{{ url_for("dash", category=dashboard.category,
-          dash=dashboard.short_name, from=options["from"], to=options["to"]) }}">
+      <a href="{{ url_for("single", category=dashboard.category,
+          dash=dashboard.short_name, name=graph.name, from=options["from"], to=options["to"]) }}">
     {% endif %}
     {{ options["label"] }}
     </a>
