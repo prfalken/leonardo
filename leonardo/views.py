@@ -1,6 +1,5 @@
-from flask import request, render_template, make_response, redirect
+from flask import request, render_template, make_response, redirect, Response
 import os
-import urllib
 import json
 import re
 from time import strftime, localtime
@@ -83,6 +82,40 @@ class View:
 view = View()
 
 
+def get_dashboard_from_category(category, dash, options):
+    if view.top_level.get(category):
+        dashboard = view.top_level[category].dashboard(dash, options)
+    else:
+        raise Exception('Category %s does not exist' % category )
+
+    return dashboard
+
+
+def zoom(request, dashboard):
+    cookie_size = {}
+
+    if request.cookies.get('graph_topo'):
+        cookie_size = json.loads(request.cookies["graph_topo"])
+
+    zoomed_width, zoomed_height = dashboard.properties['graph_width'], dashboard.properties['graph_height']
+    zoom = request.form.get('zoom')
+    if zoom == "zoom-in":
+        dashboard.properties['graph_width'] = cookie_size['width'] * 1.5
+        dashboard.properties['graph_height'] = cookie_size['height'] * 1.5
+        if cookie_size['graph_columns'] > 1:
+            dashboard.properties['graph_columns'] = cookie_size['graph_columns'] - 1
+        else:
+            dashboard.properties['graph_columns'] = cookie_size['graph_columns']
+
+    if zoom == "zoom-out":
+        dashboard.properties['graph_width']  = cookie_size['width'] / 1.5
+        dashboard.properties['graph_height'] = cookie_size['height'] / 1.5
+        dashboard.properties['graph_columns'] = cookie_size['graph_columns'] + 1
+
+    return dashboard
+
+
+
 @app.route('/')
 def index():
     if view.top_level == {}:
@@ -95,7 +128,7 @@ def index():
 
 
 @app.route('/<category>/<dash>/', methods=['GET', 'POST'])
-def dash(category, dash):
+def dash(category, dash, format='standard'):
 
     options = { 'graph_columns': view.graph_columns }
     t_from = t_until = None
@@ -109,41 +142,24 @@ def dash(category, dash):
     options['from'] = t_from
     options['until'] = t_until
 
-
     # Build Dashboard
-    if view.top_level.get(category):
-        dashboard = view.top_level[category].dashboard(dash, options)
-
-    else:
-        raise Exception('Category %s does not exist' % category )
+    dashboard = get_dashboard_from_category(category, dash, options)
 
     args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in request.args.items() ] )
 
-
-    # ZOOM 
-    zoom = request.form.get('zoom')
-
-    if request.cookies.get('graph_topo'):
-        cookie_size = json.loads(request.cookies["graph_topo"])
-
-        if zoom == "zoom-in":
-            dashboard.properties['graph_width']   = cookie_size['width'] * 1.5
-            dashboard.properties['graph_height']  = cookie_size['height'] * 1.5
-            if dashboard.properties['graph_columns'] > 1:
-                dashboard.properties['graph_columns'] = cookie_size['graph_columns'] - 1 
-        if zoom == "zoom-out":
-            dashboard.properties['graph_width']   = cookie_size['width'] / 1.5
-            dashboard.properties['graph_height']  = cookie_size['height'] / 1.5
-            dashboard.properties['graph_columns'] = cookie_size['graph_columns'] + 1
+    # Retrieve zoomed values if necessary, and update dashboard with new width and height properties
+    dashboard = zoom(request, dashboard)
 
     # Build dashboard's graphs
     graphs = dashboard.graphs()
 
+    if format == 'json':
+        return graphs
 
     if request.args.get('full'):
-        resp = make_response( render_template("full.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string ) )
+        resp = make_response( render_template("full.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to=None) )
     else:
-        resp = make_response( render_template("dashboard.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string ) )
+        resp = make_response( render_template("dashboard.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to='detail' ) )
 
     resp.set_cookie( 'interval', json.dumps( { 'from': t_from, 'until': t_until } ) )
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'], 
@@ -156,47 +172,34 @@ def dash(category, dash):
     return resp
 
 
+
 @app.route('/<category>/<dash>/details/<path:name>/', methods=['GET', 'POST'])
-def detail(category, dash, name):
+def detail(category, dash, name, format='standard'):
 
     options = { 'graph_columns': view.graph_columns }
-    cookie_size = {}
 
-    if view.top_level.get(category):
-        dashboard = view.top_level[category].dashboard(dash, options)
-    else:
-        raise Exception('Category %s does not exist' % category )
+    # Build Dashboard
+    dashboard = get_dashboard_from_category(category, dash, options)
 
-    if request.cookies.get('graph_topo'):
-        cookie_size = json.loads(request.cookies["graph_topo"])
-
-    # ZOOM 
-    zoomed_width, zoomed_height = dashboard.properties['graph_width'], dashboard.properties['graph_height']
-    zoom = request.form.get('zoom')
-    if zoom == "zoom-in":
-        zoomed_width = cookie_size['width'] * 1.5
-        zoomed_height = cookie_size['height'] * 1.5
-        if dashboard.properties['graph_columns'] > 1:
-            dashboard.properties['graph_columns'] = cookie_size['graph_columns'] - 1             
-    if zoom == "zoom-out":
-        zoomed_width  = cookie_size['width'] / 1.5
-        zoomed_height = cookie_size['height'] / 1.5
-        dashboard.properties['graph_columns'] = cookie_size['graph_columns'] + 1 
+    # Retrieve zoomed values if necessary, and update dashboard with new width and height properties
+    dashboard = zoom(request, dashboard)
 
     graphs = []
     for e in view.intervals:
         graph = dashboard.graph_by_name(name, options)
         title = "%s - %s" % ( graph['graphite'].properties['title'] , e[1] )
-        new_props = { 'from': e[0] , 'nice_from': e[1] ,'title': title, 'width': zoomed_width, 'height': zoomed_height }
+        new_props = { 'from': e[0] , 'nice_from': e[1] ,'title': title }
         graph['graphite'].properties.update( new_props )
         graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
         graphs.append(graph)
 
+    if format == 'json':
+        return graphs
     
-    resp = make_response( render_template("detail.html", view = view, dashboard = dashboard.properties, graphs = graphs, omit_link = True) )
+    resp = make_response( render_template("detail.html", view = view, dashboard = dashboard.properties, graphs = graphs, links_to="single") )
 
-    resp.set_cookie( 'graph_topo', json.dumps( { 'width': zoomed_width, 
-                                                 'height': zoomed_height, 
+    resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
+                                                 'height': dashboard.properties['graph_height'],
                                                  'graph_columns' : dashboard.properties['graph_columns'] 
                                                 } 
                                             ) 
@@ -205,6 +208,59 @@ def detail(category, dash, name):
     return resp
 
 
+
+@app.route('/<category>/<dash>/single/<path:name>/', methods=['GET', 'POST'])
+def single(category, dash, name):
+
+    # Set default width of a single graph to <default nb columns> times <default width>
+    single_width = view.graph_columns * view.graph_width
+    # Set default height of a single graph to twice the <default height>
+    single_height = 2 * view.graph_height
+
+    cookie_date = json.loads(request.cookies["interval"])
+    t_from = request.args.get( 'from', cookie_date['from'] ) or "-1hour"
+    t_until = request.args.get( 'to', cookie_date['until'] ) or "now"
+
+    # Get dashboard where the graph comes from
+    dashboard = get_dashboard_from_category(category, dash, options={})
+
+    # Retrieve zoomed values if necessary, and update dashboard with new width and height properties
+    dashboard = zoom(request, dashboard)
+
+    # get the graph
+    graph = dashboard.graph_by_name(name, options={})
+    graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
+    new_props = { 'from': t_from, 'until': t_until, 'width': single_width, 'height': single_height }
+    graph['graphite'].properties.update( new_props )
+
+    resp = make_response( render_template("single.html", view = view, dashboard = dashboard.properties, graph = graph, links_to=None) )
+    resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
+                                                 'height': dashboard.properties['graph_height'],
+                                                }
+                                            )
+    )
+
+
+    return resp
+
+
+
+# These routes return graphs Graphite URL + Leonardo properties as a JSON list of dictionaries
+# They can be used as a gateway to render graphs with toolkits such as Rickshaw, HighCharts ...
+@app.route('/api/<category>/<dash_name>/')
+def json_dashboard(category, dash_name):
+
+    graphs = dash(category, dash_name, format='json')
+    graph_list = json.dumps( [ g['graphite'].get_graph_spec() for g in graphs ] )
+    return Response(graph_list)
+
+
+@app.route('/api/<category>/<dash_name>/details/<path:graph_name>/')
+def json_detailed(category, dash_name, graph_name):
+
+    graphs = detail(category, dash_name, graph_name, format='json')
+    graph_list = json.dumps( [ g['graphite'].get_graph_spec() for g in graphs ] )
+    return Response(graph_list)
 
 
 
@@ -272,3 +328,7 @@ def multiple(asked_dashboards = None):
 def not_found(error):
   return render_template('404.html'), 404
 
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('500.html'), 500

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row-fluid">
   <div class="span8">
-    <h2>{{ graphs[0].graphite.properties.title }}&nbsp;<small>in <a href="/{{ dashboard.category}}/{{ dashboard.short_name }}/">{{ dashboard.short_name }}</a></small></h2>
+    <h2>{{ graphs[0].graphite.properties.title }}&nbsp;<small>in <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a></small></h2>
   </div>
   <div class="span2">
     {% include 'zoom_box.html' %}
