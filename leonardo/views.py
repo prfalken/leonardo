@@ -2,7 +2,7 @@ from flask import request, render_template, make_response, redirect, Response
 import os
 import json
 import re
-from time import strftime, localtime
+from time import strftime, localtime, time
 import config
 from . import app
 import leonardo
@@ -46,16 +46,16 @@ class View:
 
         self.top_level = {}
 
-        for category in [ name for name in os.listdir(self.graph_templates) 
+        for category in [ name for name in os.listdir(self.graph_templates)
                                         if not name.startswith('.') and os.path.isdir(os.path.join(self.graph_templates, name)) ]:
-            
-            if os.listdir( os.path.join(self.graph_templates,category) ) != []:                
-                
-                self.top_level[category] = leonardo.Leonardo( self.graphite_base, 
-                                                              "/render/", 
-                                                              self.graph_templates, 
-                                                              category, 
-                                                              { "width" : self.graph_width, 
+
+            if os.listdir( os.path.join(self.graph_templates,category) ) != []:
+
+                self.top_level[category] = leonardo.Leonardo( self.graphite_base,
+                                                              "/render/",
+                                                              self.graph_templates,
+                                                              category,
+                                                              { "width" : self.graph_width,
                                                                 "height" : self.graph_height
                                                               }
                                                             )
@@ -68,17 +68,17 @@ class View:
         self.search_elements = "[%s]" % elements_string[:-1]
 
     def fmt_for_select_date(self, date, default):
-        result = ""        
+        result = ""
         try:
             date = int(date)
-        except: 
+        except:
             result = default
         else:
             result = strftime("%Y-%m-%d %H:%M", localtime(date) )
         return result
 
 
-        
+
 view = View()
 
 
@@ -131,16 +131,13 @@ def index():
 def dash(category, dash, format='standard'):
 
     options = { 'graph_columns': view.graph_columns }
-    t_from = t_until = None
+    # Set a default time range, being -1 hour
+    t_until = int(time())
+    t_from = t_until - 60*60
 
-    # remember the time interval
-    if request.cookies.get('interval'):
-        cookie_date = json.loads(request.cookies["interval"])
-        t_from = request.args.get( 'from', cookie_date['from'] ) or "-1hour"
-        t_until = request.args.get( 'to', cookie_date['until'] ) or "now"
-
-    options['from'] = t_from
-    options['until'] = t_until
+    # Get the time range from the navigator. Precedence: Query string > cookie > default.
+    options['from'] = request.args.get( 'from', request.cookies.get('from', t_from))
+    options['until'] = request.args.get( 'until', request.cookies.get('until', t_until))
 
     # Build Dashboard
     dashboard = get_dashboard_from_category(category, dash, options)
@@ -161,12 +158,15 @@ def dash(category, dash, format='standard'):
     else:
         resp = make_response( render_template("dashboard.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to='detail' ) )
 
-    resp.set_cookie( 'interval', json.dumps( { 'from': t_from, 'until': t_until } ) )
-    resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'], 
-                                                 'height': dashboard.properties['graph_height'], 
-                                                 'graph_columns' : dashboard.properties['graph_columns'] 
-                                                } 
-                                            ) 
+    resp.set_cookie("from", str(options['from']))
+    resp.set_cookie("until", str(options['until']))
+    app.logger.debug("Setting cookies from:%s until:%s" % (str(options['from']), str(options['until'])))
+
+    resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
+                                                 'height': dashboard.properties['graph_height'],
+                                                 'graph_columns' : dashboard.properties['graph_columns']
+                                                }
+                                            )
     )
 
     return resp
@@ -195,14 +195,14 @@ def detail(category, dash, name, format='standard'):
 
     if format == 'json':
         return graphs
-    
+
     resp = make_response( render_template("detail.html", view = view, dashboard = dashboard.properties, graphs = graphs, links_to="single") )
 
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
                                                  'height': dashboard.properties['graph_height'],
-                                                 'graph_columns' : dashboard.properties['graph_columns'] 
-                                                } 
-                                            ) 
+                                                 'graph_columns' : dashboard.properties['graph_columns']
+                                                }
+                                            )
     )
 
     return resp
@@ -273,7 +273,7 @@ def search():
         category, dashboard = search_string.split('/', 1)
     except ValueError:
         category = None
-    
+
     # try to expand search regexp
     dashboard_list = []
     if compare_with:
@@ -294,16 +294,13 @@ def search():
 @app.route('/multiple/')
 def multiple(asked_dashboards = None):
     options = {}
-    t_from = t_until = None
+    # Set a default time range, being -1 hour
+    t_until = int(time())
+    t_from = t_until - 60*60
 
-    if request.cookies.get('interval'):
-        cookie_date = json.loads(request.cookies["interval"])
-        t_from = request.args.get( 'from', cookie_date['from'] ) or "-1hour"
-        t_until = request.args.get( 'to', cookie_date['until'] ) or "now"
-
-
-    options['from'] = t_from
-    options['until'] = t_until
+    # Get the time range from the navigator. Precedence: Query string > cookie > default.
+    options['from'] = request.args.get( 'from', request.cookies.get('from', t_from))
+    options['until'] = request.args.get( 'until', request.cookies.get('until', t_until))
 
     dashboard_list = []
     for db in asked_dashboards:
@@ -317,7 +314,11 @@ def multiple(asked_dashboards = None):
     args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in request.args.items() ] )
 
     resp = make_response( render_template("multiple.html", view = view, dashboard_list = dashboard_list, args = args_string ) )
-    resp.set_cookie( 'interval', json.dumps( { 'from': t_from, 'until': t_until } ) )
+
+    resp.set_cookie("from", str(options['from']))
+    resp.set_cookie("until", str(options['until']))
+    app.logger.debug("Setting cookies from:%s until:%s" % (str(options['from']), str(options['until'])))
+
     return resp
 
 
