@@ -69,6 +69,7 @@ class GraphiteGraph:
                 raise Exception('Could not parse yaml file %s. Error was : %s' % (self.file, e) )
 
 
+
         for key in yaml_spec:
             if key != 'fields':
                 self.properties[key] = yaml_spec[key]
@@ -78,6 +79,7 @@ class GraphiteGraph:
             self.target_order.append(field)
 
 
+
     def get_graph_spec(self):
         return { 'url': self.url() + '&format=json' , 'properties': self.properties }
 
@@ -85,6 +87,9 @@ class GraphiteGraph:
     def url(self):
         properties = self.properties
         dual_axis = False
+        for target in self.targets:
+            if "second_y_axis" in self.targets[target]:
+                dual_axis = True
 
         url_parts = [ "%s=%s" % (item, properties[item]) for item in ["title", "vtitle", "from", "width", "height", "until"] ]
 
@@ -93,16 +98,16 @@ class GraphiteGraph:
         if properties.get("hide_legend"): url_parts.append( "hideLegend=%s" % properties["hide_legend"] )
         if properties.get("hide_grid"): url_parts.append( "hideGrid=%s" % properties["hide_grid"] )
         if properties.get("hide_y_axis"): url_parts.append( "hideYAxis=%s" % properties["hide_y_axis"] )
- 
-        if dual_axis:
-           if properties.get("ymin"): url_parts.append( "yMinLeft=%s" % properties["ymin"] )
-           if properties.get("ymax"): url_parts.append( "yMaxLeft=%s" % properties["ymax"] )
-        else:
-           if properties.get("ymin"): url_parts.append( "yMin=%s" % properties["ymin"] )
-           if properties.get("ymax"): url_parts.append( "yMax=%s" % properties["ymax"] )
 
-        if properties.get("yminright"): url_parts.append( "yMinRight=%s" % properties["yminright"] )
-        if properties.get("ymaxright"): url_parts.append( "yMaxRight=%s" % properties["ymaxright"] )
+        if dual_axis:
+            if properties.get("ymin") is not None: url_parts.append( "yMinLeft=%s" % properties["ymin"] )
+            if properties.get("ymax") is not None: url_parts.append( "yMaxLeft=%s" % properties["ymax"] )
+        else:
+            if properties.get("ymin") is not None: url_parts.append( "yMin=%s" % properties["ymin"] )
+            if properties.get("ymax") is not None: url_parts.append( "yMax=%s" % properties["ymax"] )
+
+        if properties.get("yminright") is not None: url_parts.append( "yMinRight=%s" % properties["yminright"] )
+        if properties.get("ymaxright") is not None: url_parts.append( "yMaxRight=%s" % properties["ymaxright"] )
         if properties.get("yunit_system"): url_parts.append( "yUnitSystem=%s" % properties["yunit_system"] )
         if properties.get("linewidth"): url_parts.append( "lineWidth=%s" % properties["linewidth"] )
         if properties.get("linemode"): url_parts.append( "lineMode=%s" % properties["linemode"] )
