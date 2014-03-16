@@ -132,8 +132,8 @@ def dash(category, dash, format='standard'):
 
     options = { 'graph_columns': view.graph_columns }
     # Set a default time range, being -1 hour
-    t_until = int(time())
-    t_from = t_until - 60*60
+    t_until = "now"
+    t_from = "-1hour"
 
     # Get the time range from the navigator. Precedence: Query string > cookie > default.
     options['from'] = request.args.get( 'from', request.cookies.get('from', t_from))
@@ -217,9 +217,9 @@ def single(category, dash, name):
     # Set default height of a single graph to twice the <default height>
     single_height = 2 * view.graph_height
 
-    cookie_date = json.loads(request.cookies["interval"])
-    t_from = request.args.get( 'from', cookie_date['from'] ) or "-1hour"
-    t_until = request.args.get( 'to', cookie_date['until'] ) or "now"
+    # Get the time range from the navigator. Precedence: Query string > cookie > default.
+    t_from = request.args.get( 'from', request.cookies.get('from', "-1hour"))
+    t_until = request.args.get( 'until', request.cookies.get('until', "now"))
 
     # Get dashboard where the graph comes from
     dashboard = get_dashboard_from_category(category, dash, options={})
@@ -239,7 +239,6 @@ def single(category, dash, name):
                                                 }
                                             )
     )
-
 
     return resp
 
@@ -295,8 +294,8 @@ def search():
 def multiple(asked_dashboards = None):
     options = {}
     # Set a default time range, being -1 hour
-    t_until = int(time())
-    t_from = t_until - 60*60
+    t_until = "now"
+    t_from = "-1hour"
 
     # Get the time range from the navigator. Precedence: Query string > cookie > default.
     options['from'] = request.args.get( 'from', request.cookies.get('from', t_from))

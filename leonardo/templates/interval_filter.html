@@ -3,10 +3,10 @@
   <li {{" class=active" if options['from'] == dashboard.graph_from }}>
     {% if "to" not in options %}
       <a href="{{ url_for("dash", category=dashboard.category,
-          dash=dashboard.short_name, from=options["from"], to="now") }}">
+          dash=dashboard.short_name, from=options["from"], until="now") }}">
     {% else %}
       <a href="{{ url_for("dash", category=dashboard.category,
-          dash=dashboard.short_name, from=options["from"], to=options["to"]) }}">
+          dash=dashboard.short_name, from=options["from"], until=options["to"]) }}">
     {% endif %}
     {{ options["label"] }}
     </a>
@@ -18,5 +18,5 @@
 <div class="nav" id="dateTimePicker">
   From: <input type="text"  name="dt_from" id="dt_from" value="{{ view.fmt_for_select_date(dashboard.graph_from, 'from') }}" class="hasDatepicker center"/>
   To: <input type="text" name="dt_to" id="dt_to" value="{{ view.fmt_for_select_date(dashboard.graph_until, 'until') }}" class="hasDatepicker center"/>
-  <button type="button" class="btn" onClick="leo.selectDt()">Show</button>
+  <button type="button" class="btn" onClick="leo.selectDateTime()">Show</button>
 </div>

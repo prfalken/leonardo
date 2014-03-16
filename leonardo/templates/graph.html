@@ -4,7 +4,7 @@
 
 {% elif links_to == 'single' %}
 <a href="{{ url_for("single", category=dashboard.category,
-                    dash=dashboard.short_name, name=graph.name, from=graph.graphite.properties.from, to=graph.graphite.properties.to ) }}">
+                    dash=dashboard.short_name, name=graph.name, from=graph.graphite.properties.from, until=graph.graphite.properties.to ) }}">
 
 {% endif %}
     <img {% if dashboard.no_resize %}class="no-resize"{% else%}class="bordered"{% endif %} src="{{ view.graphite_render }}?{{ graph.graphite.url() }}" title="{{ graph.graphite.title }}"  data-content="{{ graph.graphite.description }}"/>
