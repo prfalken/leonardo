@@ -6,6 +6,6 @@ from leonardo import app
 
 
 app.debug = True
-app.run()
+app.run(host='0.0.0.0')
 
 
