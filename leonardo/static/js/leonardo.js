@@ -158,3 +158,14 @@ var leo = {
         }
     },
 };
+
+
+$(document).on('click', '.star', function(){
+    $(this).attr('class', 'star-lit');
+    $.cookie("favorite", window.location.pathname, { expires: 365, path: '/' });
+});
+
+$(document).on('click', '.star-lit', function(){
+    $(this).attr('class', 'star');
+    $.removeCookie("favorite", { path: '/' });
+});

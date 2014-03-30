@@ -1,14 +1,14 @@
-from flask import request, render_template, make_response, redirect, Response
+from flask import request, render_template, make_response, redirect, Response, url_for
 import os
 import json
 import re
-from time import strftime, localtime, time
+from time import strftime, localtime
 import config
 from . import app
 import leonardo
 from graph import GraphiteGraph
-import logging
 from log import LoggingException
+import urllib
 
 class View:
     def __init__(self):
@@ -126,6 +126,13 @@ def index():
         (request.method, request.url)
     )
 
+    favorite_dashboard = request.cookies.get('favorite')
+    if favorite_dashboard is not None:
+        category, dash = filter(None, urllib.unquote(favorite_dashboard).split('/'))
+        app.logger.debug('Redirect to favorite dashboard /%s/%s' % (category, dash) )
+        return redirect( url_for('dash', category = category, dash = dash) )
+
+
     if view.top_level == {}:
         app.logger.warning("No dashboards found in the templates directory")
     dashboards_to_display = {}
@@ -165,6 +172,11 @@ def dash(category, dash, format='standard'):
 
     if format == 'json':
         return graphs
+
+    # check if dashboard is set as favorite
+    favorite_dashboard = request.cookies.get('favorite', '')
+    if urllib.unquote( favorite_dashboard ) == request.path:
+        dashboard.properties['favorite'] = True
 
     if request.args.get('full'):
         resp = make_response( render_template("full.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to=None) )
