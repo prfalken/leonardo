@@ -2,6 +2,7 @@ import os, fnmatch
 import glob
 import yaml
 from graph import GraphiteGraph
+from log import LoggingException
 
 class Dashboard:
     def __init__(self, short_name, graph_templates, category, options={}, graphite_render=""):
@@ -26,12 +27,12 @@ class Dashboard:
         if options.get('until'): self.properties['graph_until'] = options['until']
 
         if not os.path.isdir(directory):
-            raise Exception("Cannot find dashboard directory %s" % directory)
+            raise LoggingException("Cannot find dashboard directory %s" % directory)
 
         self.properties['yaml'] = yaml_file = os.path.join(directory, "dash.yaml")
 
         if not os.path.isfile(yaml_file):
-            raise Exception("Cannot find YAML file %s" % yaml_file)
+            raise LoggingException("Cannot find YAML file %s" % yaml_file)
 
         with open(yaml_file) as yaml_conf:
             self.properties.update( yaml.load(yaml_conf) )
@@ -63,7 +64,7 @@ class Dashboard:
         elif type(include_option) is str:
             graph_includes = [include_option]
         else:
-            raise Exception("Invalid value for include in %s/dash.yaml" % (directory))
+            raise LoggingException("Invalid value for include in %s/dash.yaml" % (directory))
 
         # Expand wildcards with glob, creates list of lists
         self.graph_includes = [ glob.glob( os.path.join(graph_templates, d) ) for d in graph_includes ]
