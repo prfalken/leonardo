@@ -66,7 +66,7 @@ class GraphiteGraph:
             try:
                 yaml_spec = p.parse(graph_file.read())
             except Exception as e:
-                raise Exception('Could not parse yaml file %s. Error was : %s' % (self.file, e) )
+                raise LoggingException('Could not parse yaml file %s. Error was : %s' % (self.file, e) )
 
 
 
