@@ -129,26 +129,26 @@ class GraphiteGraph:
         if properties.get("unique_legend"): url_parts.append( "uniqueLegend=%s" % properties["unique_legend"] )
         if properties.get("theme"): url_parts.append( "template=%s" % properties["theme"] )
 
-        # target is a graph specification 
+        # target is a graph specification
         for target in self.target_order:
 
             graphite_target = self.targets[target]["data"]
             target_props = self.targets[target]
 
             if "exclude"                 in target_props: graphite_target = 'exclude(%s, "%s")' % ( graphite_target, target_props['exclude'] )
-            if "remove_above_percentile" in target_props: graphite_target = "removeAbovePercentile(%s)" % graphite_target 
-            if "remove_above_value"      in target_props: graphite_target = "removeAboveValue(%s,%s)" % (graphite_target, target_props['remove_above_value'] ) 
+            if "remove_above_percentile" in target_props: graphite_target = "removeAbovePercentile(%s)" % graphite_target
+            if "remove_above_value"      in target_props: graphite_target = "removeAboveValue(%s,%s)" % (graphite_target, target_props['remove_above_value'] )
             if "remove_below_percentile" in target_props: graphite_target = "removeBelowPercentile(%s,%s)" % ( graphite_target, target_props['remove_below_percentile'] )
             if "remove_below_value"      in target_props: graphite_target = "removeBelowValue(%s,%s)" % ( graphite_target, target_props['remove_below_value'])
             if "field_linewidth"         in target_props: graphite_target = "lineWidth(%s,%s)" % ( graphite_target, target_props['field_linewidth'] )
             if "keep_last_value"         in target_props: graphite_target = "keepLastValue(%s)" % graphite_target
-            
+
             if "derivative" in target_props:
               graphite_target = "derivative(%s)" % graphite_target
             elif "non_negative_derivative" in target_props:
               graphite_target = "nonNegativeDerivative(%s)" % graphite_target
 
-            if "sum"                    in target_props: graphite_target = "sum(%s)" % graphite_target        
+            if "sum"                    in target_props: graphite_target = "sum(%s)" % graphite_target
             if "sum_with_wildcard"      in target_props: graphite_target = "sumSeriesWithWildcard(%s,%s)" % ( graphite_target, target_props['sum_with_wildcard'] )
             if "highest_average"        in target_props: graphite_target = "highestAverage(%s,%s)" % ( graphite_target, target_props['highest_average'] )
             if "scale"                  in target_props: graphite_target = "scale(%s,%s)" % ( graphite_target, target_props['scale'] )
@@ -167,7 +167,7 @@ class GraphiteGraph:
             if "dashed"        in target_props: graphite_target = "dashed(%s)" % graphite_target
             if "second_y_axis" in target_props: graphite_target = "secondYAxis(%s)" % graphite_target
 
-            if 'alias_by_node' in target_props: 
+            if 'alias_by_node' in target_props:
                 graphite_target = "aliasByNode(%s,%s)" % ( graphite_target, target_props['alias_by_node'])
             elif 'alias_sub_search' in target_props:
                 graphite_target = """aliasSub(%s,"%s","%s")""" % ( graphite_target, target_props['alias_sub_search'], target_props['alias_sub_replace'] )
@@ -176,7 +176,7 @@ class GraphiteGraph:
             else:
                 graphite_target = """alias(%s, "%s")""" % (graphite_target, target)
 
-            if 'cacti_style' in target_props: 
+            if 'cacti_style' in target_props:
                 graphite_target = 'cactiStyle(%s,"%s")' % ( graphite_target, target_props['cacti_style'] )
             elif 'legend_value' in target_props:
                 graphite_target = """legendValue(%s, %s)""" % (graphite_target, target_props['legend_value'])
