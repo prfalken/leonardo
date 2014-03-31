@@ -6,6 +6,17 @@ $(document).ready(function() {
         $('#toggleDateTimePicker').parent().addClass('active');
     else
         $('#dateTimePicker').hide();
+
+    $("div.graph-control-panel").hide();
+    $("div.graph").hover(
+        function() {
+            $(this).children(".graph-control-panel").toggle(0);
+        },
+        function()
+        {
+            $(this).children(".graph-control-panel").toggle(50);
+        }
+    );
 });
 
 $(function() {
