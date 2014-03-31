@@ -2,6 +2,9 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bootstrap.css") }}">
+        {% if view.options.theme == "dark" %}
+            <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/darkstrap.css") }}">
+        {% endif%}
         <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/jquery.datetimepicker.css") }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/leonardo.css") }}">
