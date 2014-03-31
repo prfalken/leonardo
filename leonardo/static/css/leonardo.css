@@ -33,3 +33,19 @@ img.no-resize {
     overflow:       hidden;
     overflow-y:     auto;
 }
+
+.star {
+    background: transparent url(/static/img/star.png);
+    display: inline-block;
+    vertical-align: -10%;
+    height: 38px;
+    width: 38px;
+}
+
+.star-lit {
+    background:transparent url(/static/img/star-lit.png);
+    display: inline-block;
+    vertical-align: -10%;
+    height: 38px;
+    width: 38px;
+}
