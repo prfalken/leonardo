@@ -277,3 +277,13 @@ logging:
      subject: example message
      level: error
 ```
+
+Dark/Light Theme
+----------------
+Add "theme: dark" to options in leonardo.yaml to switch Leonardo to dark mode :
+
+	options:
+		theme: dark	
+
+![Dark dashboard](https://github.com/prfalken/leonardo/raw/master/sample/dashboard-dark.jpg)
+
