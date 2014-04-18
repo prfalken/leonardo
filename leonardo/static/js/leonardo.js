@@ -162,6 +162,7 @@ var leo = {
 
 $(document).on('click', '.star', function(){
     $(this).attr('class', 'star-lit');
+    $.cookie.raw = true;
     $.cookie("favorite", window.location.pathname, { expires: 365, path: '/' });
 });
 
