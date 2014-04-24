@@ -51,7 +51,8 @@ class GraphiteGraph:
                     "placeholders" : None,
                     "area_alpha" : None,
                     "theme" : None,
-                    "unique_legend" : None
+                    "unique_legend" : None,
+                    "margin": None,
                 }
 
         self.properties.update(self.overrides)
@@ -93,6 +94,7 @@ class GraphiteGraph:
 
         url_parts = [ "%s=%s" % (item, properties[item]) for item in ["title", "vtitle", "from", "width", "height", "until"] ]
 
+
         if properties.get("area"): url_parts.append( "areaMode=%s" % properties["area"] )
         if properties.get("hide_axes"): url_parts.append( "hideAxes=%s" % properties["hide_axes"] )
         if properties.get("hide_legend"): url_parts.append( "hideLegend=%s" % properties["hide_legend"] )
@@ -128,6 +130,7 @@ class GraphiteGraph:
         if properties.get("min_x_step"): url_parts.append( "minXStep=%s" % properties["min_x_step"] )
         if properties.get("unique_legend"): url_parts.append( "uniqueLegend=%s" % properties["unique_legend"] )
         if properties.get("theme"): url_parts.append( "template=%s" % properties["theme"] )
+        if properties.get("margin"): url_parts.append( "margin=%s" % properties["margin"] )
 
         # target is a graph specification 
         for target in self.target_order:
