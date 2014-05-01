@@ -240,7 +240,7 @@ def detail(category, dash, name, format='standard'):
 
 
 @app.route('/<category>/<dash>/single/<path:name>/', methods=['GET', 'POST'])
-def single(category, dash, name):
+def single(category, dash, name, format='standard'):
 
     # Set default width of a single graph to <default nb columns> times <default width>
     single_width = view.graph_columns * view.graph_width
@@ -262,6 +262,9 @@ def single(category, dash, name):
     graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
     new_props = { 'from': t_from, 'until': t_until, 'width': single_width, 'height': single_height }
     graph['graphite'].properties.update( new_props )
+
+    if format == 'json':
+        return graph
 
     resp = make_response( render_template("single.html", view = view, dashboard = dashboard.properties, graph = graph, links_to=None) )
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
@@ -290,6 +293,13 @@ def json_detailed(category, dash_name, graph_name):
     graphs = detail(category, dash_name, graph_name, format='json')
     graph_list = json.dumps( [ g['graphite'].get_graph_spec() for g in graphs ] )
     return Response(graph_list)
+
+@app.route('/api/<category>/<dash_name>/single/<path:graph_name>/')
+def json_single(category, dash_name, graph_name):
+
+    graph = single(category, dash_name, graph_name, format='json')
+    graph_spec = json.dumps( graph['graphite'].get_graph_spec() )
+    return Response(graph_spec)
 
 
 
