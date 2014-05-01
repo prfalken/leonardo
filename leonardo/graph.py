@@ -52,7 +52,8 @@ class GraphiteGraph:
                     "area_alpha" : None,
                     "theme" : None,
                     "unique_legend" : None,
-                    "margin": None,
+                    "margin" : None,
+                    "color_list" : None,
                 }
 
         self.properties.update(self.overrides)
@@ -131,6 +132,7 @@ class GraphiteGraph:
         if properties.get("unique_legend"): url_parts.append( "uniqueLegend=%s" % properties["unique_legend"] )
         if properties.get("theme"): url_parts.append( "template=%s" % properties["theme"] )
         if properties.get("margin"): url_parts.append( "margin=%s" % properties["margin"] )
+        if properties.get("color_list"): url_parts.append( "colorList=%s" % ','.join(properties["color_list"]) )
 
         # target is a graph specification 
         for target in self.target_order:

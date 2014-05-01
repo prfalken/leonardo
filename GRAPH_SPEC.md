@@ -135,6 +135,16 @@ Used to specify a margin between the graph and image borders
 
     margin: 30
 
+### *color_list*
+
+Use one color of the list for each target.
+
+    color_list:
+     - FEA400
+     - #00FF22
+     - FFFF00
+     - blue
+
 ### *unique_legend*
 
 Display only unique legend items, removing any duplicates.
