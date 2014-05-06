@@ -3,3 +3,6 @@ config/*
 gen_graphs.py
 *.pyc
 graphs/*
+Leonardo.egg-info/
+build/
+dist/

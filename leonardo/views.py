@@ -41,6 +41,9 @@ class View:
         # Dashboard title
         self.dash_title = self.options.get('title', 'Graphite Dashboard')
 
+        # Dashboard logo
+        self.dash_logo = self.options.get('logo')
+
         # Time filters in interface
         self.interval_filters = self.options.get('interval_filters', [])
 
@@ -310,7 +313,7 @@ def search():
         "responing to %s %s" %
         (request.method, request.url)
     )
-    
+
     search_string = request.args.get('dashboard')
     compare_with  = request.args.get('compare_with')
 
@@ -344,7 +347,7 @@ def multiple(asked_dashboards = None):
         "responing to %s %s" %
         (request.method, request.url)
     )
-    
+
     options = {}
     # Set a default time range, being -1 hour
     t_until = "now"

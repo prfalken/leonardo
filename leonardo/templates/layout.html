@@ -5,6 +5,8 @@
         {% if view.options.theme == "dark" %}
             <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/darkstrap.css") }}">
         {% endif%}
+
+
         <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/jquery.datetimepicker.css") }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/leonardo.css") }}">
@@ -25,7 +27,7 @@
         <title>{{ view.dash_title }}</title>
     </head>
     <body>
-        <div class="navbar">
+        <div class="navbar navbar-inverse navbar-static-top">
             <div class="navbar-inner">
                 <div class="container-fluid">
                     <a class="brand" href="{{ url_for("index") }}">
@@ -53,10 +55,10 @@
                             </div>
                         </form>
                     </div>
-                </div>            
+                </div>
             </div>
 
-        </div>        
+        </div>
         <div class="container-fluid">
              {% block content %}{% endblock %}
         </div>
