@@ -1,30 +1,33 @@
 {% extends "layout.html" %}
 
+{% block title %}
+{{ dashboard.short_name }}
+{% endblock %}
+
+
 {% block content %}
-<div class="row-fluid" style="vertical-align: middle;">
- <h2>
+<div class="row title">
+  <h2 class="col-md-8">
     <span id="fav_star" {% if dashboard.favorite %}class="star-lit"{% else %}class="star"{% endif %}></span>
     {{ dashboard.short_name }}
     <small>{{ dashboard.description }}</small>
   </h2>
-</div>
-
-<div class="row-fluid">
-  <div class="span8">
-    {% include 'interval_filter.html' %}
-  </div>
-  <div class="pull-right">
-    {% include 'zoom_box.html' %}
+    <div class="col-md-4">
+    {% include '_zoom_box.html' %}
   </div>
 </div>
 
-  <table>
-    <tr>
+<div class="row">
+  <div class="col-md-12">
+    {% include '_interval_filter.html' %}
+  </div>
+</div>
+
+  <div class="row graphs">
       {% for graph in graphs | sort(attribute='name')  %}
-      <td class="td-padded">
-        <div class="graph">
+        <div class="col-md-4">
             <div id={{graph.name}} class="graph-render">
-                {% include 'graph.html' %}
+                {% include '_graph.html' %}
             </div>
             {% if "documentation" in graph.graphite.properties %}
             <div id={{graph.name+"-cp"}} class="graph-control-panel">
@@ -34,13 +37,6 @@
             </div>
             {% endif %}
         </div>
-      </td>
-      {% if not dashboard.no_resize and loop.index is divisibleby dashboard.graph_columns %}
-        </tr>
-        <tr>
-      {% endif %}
       {% endfor %}
-      </span>
-    </tr>
-  </table>
+  </div>
 {% endblock %}

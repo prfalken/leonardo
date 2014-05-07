@@ -1,27 +1,17 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="row-fluid">
-    <h2>{{ graph.graphite.properties.title }}&nbsp;<small>in <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a></small></h2>
-  <div class="row-fluid">
-    <div class="span3">
-    </div>
-    <div class="span6">
-      {% include 'interval_filter_single.html' %}
+  <h2>{{ graph.graphite.properties.title }}&nbsp;<small>in <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a></small></h2>
+
+  <div class="row">
+    <div class="col-md-12">
+      {% include '_interval_filter_single.html' %}
     </div>
   </div>
-</div>
 
-<div>
-  <table align=center>
-    <tr>
-      <td class="td-padded">
-          <div>
-            {% include 'graph.html' %}
-          </div>
-      </td>
-    </tr>
-  </table>
-</div>
-
+  <div class="row">
+    <div class="col-md-12">
+      {% include '_graph.html' %}
+    </div>
+  </div>
 {% endblock %}

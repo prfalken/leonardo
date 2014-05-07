@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/bootstrap.css") }}">
-        {% if view.options.theme == "dark" %}
-            <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/darkstrap.css") }}">
-        {% endif%}
 
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/leonardo.css") }}">
+
+        <script src="{{ url_for("static", filename="js/jquery-1.7.2.min.js") }}"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="{{ url_for("static", filename="js/leonardo.js") }}"></script>
 
         <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/jquery.datetimepicker.css") }}">
-        <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="css/leonardo.css") }}">
         <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-        <script src="{{ url_for("static", filename="js/jquery-1.7.2.min.js") }}"></script>
         <script src="{{ url_for("static", filename="js/jquery-ui-1.10.0.custom.min.js") }}"></script>
         <script src="{{ url_for("static", filename="js/jquery.datetimepicker.js") }}"></script>
         <script src="{{ url_for("static", filename="js/jquery-ui-sliderAccess.js") }}"></script>
         <script src="{{ url_for("static", filename="js/jquery.cookie.js") }}"></script>
-        <script src="{{ url_for("static", filename="js/leonardo.js") }}"></script>
         <script src="{{ url_for("static", filename="js/selectdate.js") }}"></script>
         <script src="{{ url_for("static", filename="js/bootstrap-twipsy.js") }}"></script>
         <script src="{{ url_for("static", filename="js/bootstrap-scrollspy.js") }}"></script>
@@ -24,43 +23,17 @@
         <script src="{{ url_for("static", filename="js/bootstrap-tooltip.js") }}"></script>
         <script src="{{ url_for("static", filename="js/bootstrap-popover.js") }}"></script>
         <script src="{{ url_for("static", filename="js/bootstrap-typeahead.js") }}"></script>
-        <title>{{ view.dash_title }}</title>
+
+        <title>
+        {% block title %}
+        {{ view.dash_title }}
+        {% endblock %}
+        </title>
     </head>
     <body>
-        <div class="navbar navbar-inverse navbar-static-top">
-            <div class="navbar-inner">
-                <div class="container-fluid">
-                    <a class="brand" href="{{ url_for("index") }}">
-                        {{ view.dash_title }}
-                    </a>
-                    <ul class="nav">
-                    {% for category in view.top_level %}
-                      <li class="dropdown" id="menu-{{ category }}">
-                            <a href="#" data-toggle="dropdown" href="#menu-{{ category }}" class="dropdown-toggle">{{ category }} <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                            {% for board in view.top_level[category].dashboards() %}
-                                <li><a href="{{ url_for("dash", category=category,
-                                    dash=board.link) }}">{{ board.name }}</a>
-                                </li>
-                            {% endfor %}
-                            </ul>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                    <div class="pull-right" style="" class='nav input-append'>
-                        <form id="form-search" name="dashboards" class="form-search" method="get" action="/search">
-                            <div class="input-append">
-                                <input class="span2 search-query" name="dashboard" type="text" placeholder="Dashboard..." data-provide="typeahead" data-items="10" data-source='{{ view.search_elements | safe }}' autocomplete="off" required />
-                                <button class="btn btn-primary" type="submit" value"submit" /><i class="icon-search icon-white"></i></button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-        <div class="container-fluid">
-             {% block content %}{% endblock %}
-        </div>
-    </body>
+    {% include '_header.html' %}
+    <div class="container-fluid">
+        {% block content %}{% endblock %}
+    </div>
+  </body>
 </html>

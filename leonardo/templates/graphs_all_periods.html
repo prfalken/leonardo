@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% set graph_title = graphs[0].graphite.properties.title %}
+
+{% block title %}
+{{ graph_title }} - All periods
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-10">
+    <h2>{{ graph_title }}&nbsp;<small>in <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a></small></h2>
+  </div>
+  <div class="col-md-2">
+    {% include '_zoom_box.html' %}
+  </div>
+</div>
+
+<div>
+  <table align=center>
+    {% for graph in graphs %}
+    <tr>
+      <td class="td-padded">
+          <div>
+            {% set title = graph.graphite.properties.nice_from %}
+            {% include '_graph.html' %}
+          </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

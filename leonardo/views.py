@@ -229,7 +229,7 @@ def detail(category, dash, name, format='standard'):
     if format == 'json':
         return graphs
 
-    resp = make_response( render_template("detail.html", view = view, dashboard = dashboard.properties, graphs = graphs, links_to="single") )
+    resp = make_response( render_template("graphs_all_periods.html", view = view, dashboard = dashboard.properties, graphs = graphs, links_to="single") )
 
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
                                                  'height': dashboard.properties['graph_height'],

@@ -7,6 +7,56 @@ div.graph-control-panel {
     position: absolute;
 }
 
+.graphs
+{
+    margin-top: 20px;
+}
+.graph
+{
+    margin-bottom: 20px;
+}
+.graph img
+{
+    width: 100%;
+}
+
+.zoom-box
+{
+    float: right;
+    margin-top: 30px;
+}
+
+.title
+{
+    margin-bottom: 8px;
+}
+
+#dateTimePicker
+{
+    float: left;
+    margin-left: 10px;
+    display: none;
+}
+
+.interval-nav
+{
+    margin-bottom: 16px;
+}
+.interval-nav > li > a
+{
+    padding: 7px 15px;
+    white-space: nowrap;
+}
+
+#dateTimePicker .input-group
+{
+    float: left;
+    width: 200px;
+    margin-right: 10px;
+}
+
+body { padding-top: 50px; }
+
 body.full {
     background-color: black;
 }
@@ -15,11 +65,20 @@ body.full {
     margin: 5px 0;
 }
 
-img.bordered {
+.graph
+{
     box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
+}
+
+.graph h3
+{
+    background-color: #EFEFEF;
+    color: #333;
+    font-size: 16px;
+    line-height: 30px;
 }
 
 img.no-resize {
