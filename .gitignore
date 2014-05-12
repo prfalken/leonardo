@@ -2,6 +2,7 @@ config/*
 !config/leonardo.yaml.example
 gen_graphs.py
 *.pyc
+.DS_Store
 graphs/*
 Leonardo.egg-info/
 build/
