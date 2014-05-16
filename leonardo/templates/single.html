@@ -2,7 +2,11 @@
 
 {% block content %}
 <div class="row-fluid">
-    <h2>{{ graph.graphite.properties.title }}&nbsp;<small>in <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a></small></h2>
+    <h3>{{ dashboard.category }} 
+          > <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a> 
+          > {{ graph.graphite.properties.title }}&nbsp;
+    </h3>
+
   <div class="row-fluid">
     <div class="span3">
     </div>

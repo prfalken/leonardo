@@ -2,11 +2,11 @@
 
 {% block content %}
 <div class="row-fluid" style="vertical-align: middle;">
- <h2>
+ <h3>
     <span id="fav_star" {% if dashboard.favorite %}class="star-lit"{% else %}class="star"{% endif %}></span>
-    {{ dashboard.short_name }}
+    {{ dashboard.category }} > {{ dashboard.short_name }}
     <small>{{ dashboard.description }}</small>
-  </h2>
+</h3>
 </div>
 
 <div class="row-fluid">
