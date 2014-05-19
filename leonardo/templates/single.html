@@ -4,8 +4,7 @@
   <h2>
   {{ dashboard.category }}
             / <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a>
-            / {{ graph.graphite.properties.title }}&nbsp;
-            {{ graph.graphite.properties.title }}
+            / {{ graph.graphite.properties.title }}
   </h2>
 
   <div class="row">
