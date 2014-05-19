@@ -1,11 +1,13 @@
-$(document).ready(function() {
+$(function()
+{
     // process the query string.
     leo.transformQueryStringToObject(window.location.search);
 
-    if($('#dt_from').val() != 'from')
-        $('#toggleDateTimePicker').parent().addClass('active');
-    else
-        $('#dateTimePicker').hide();
+    if($('#dt_from').val() != '')
+    {
+        $('#toggleDateTimePicker').removeClass('active').hide();
+        $('#dateTimePicker').fadeIn('fast');
+    }
 
     $("div.graph-control-panel").hide();
     $("div.graph").hover(
@@ -17,15 +19,13 @@ $(document).ready(function() {
             $(this).children(".graph-control-panel").toggle(50);
         }
     );
-});
 
-$(function() {
     $('#toggleDateTimePicker').click(function() {
-        $('#dateTimePicker').toggle(400);
+        $(this).animate({width: '0px', opacity: 0});
+        $('.nav li').removeClass('active');
+        $('#dateTimePicker').fadeIn('fast');
     });
-});
 
-$(function() {
     var startDateTextBox = $('#dt_from');
     var endDateTextBox = $('#dt_to');
     startDateTextBox.datetimepicker({

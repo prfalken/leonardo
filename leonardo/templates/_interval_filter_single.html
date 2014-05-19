@@ -1,0 +1,32 @@
+<ul class="nav nav-pills interval-nav">
+  {% for options in view.interval_filters %}
+  <li {{" class=active" if options['from'] == graph.graphite.properties.from }}>
+  {% if "to" not in options %}
+      <a href="{{ url_for("single", category=dashboard.category,
+          dash=dashboard.short_name, name=graph.name ,from=options["from"], until="now") }}">
+    {% else %}
+      <a href="{{ url_for("single", category=dashboard.category,
+          dash=dashboard.short_name, name=graph.name, from=options["from"], until=options["to"]) }}">
+    {% endif %}
+    {{ options["label"] }}
+    </a>
+  </li>
+  {% endfor %}
+  <li id="toggleDateTimePicker">
+    <a href="#">Custom interval</a>
+  </li>
+  <li id="dateTimePicker">
+    <form action="">
+      <div class="input-group col-md-4">
+        <span class="input-group-addon">from</span>
+        <input type="text"  name="dt_from" id="dt_from" value="{{ view.fmt_for_select_date(dashboard.graph_from, '') }}" class="hasDatepicker form-control" placeholder="start date"/>
+      </div>
+
+      <div class="input-group col-md-4">
+        <span class="input-group-addon">to</span>
+        <input type="text" name="dt_to" id="dt_to" value="{{ view.fmt_for_select_date(dashboard.graph_until, '') }}" class="hasDatepicker form-control" placeholder="end date"/>
+      </div>
+     <button type="button" class="btn btn-primary" onClick="leo.selectDateTime()">Show</button>
+    </form>
+  </li>
+</ul>
