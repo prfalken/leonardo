@@ -23,6 +23,34 @@
   </div>
 </div>
 
+
+<table>
+  <tr>
+    {% for graph in graphs | sort(attribute='name')  %}
+    <td class="td-padded">
+      <div class="graph">
+          <div id={{graph.name}} class="graph-render">
+              {% include '_graph.html' %}
+          </div>
+          {% if "documentation" in graph.graphite.properties %}
+          <div id={{graph.name+"-cp"}} class="graph-control-panel">
+              <div class="btn-group btn-group-vertical">
+                  <a class="btn btn-mini" href="{{graph.graphite.properties["documentation"]}}"><i class="icon-question-sign"></i></a>
+              </div>
+          </div>
+          {% endif %}
+      </div>
+    </td>
+    {% if not dashboard.no_resize and loop.index is divisibleby dashboard.graph_columns %}
+      </tr>
+      <tr>
+    {% endif %}
+    {% endfor %}
+    </span>
+  </tr>
+</table>
+
+
   <div class="row graphs">
       {% for graph in graphs | sort(attribute='name')  %}
         <div class="col-md-4">
