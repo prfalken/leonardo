@@ -7,6 +7,11 @@ div.graph-control-panel {
     position: absolute;
 }
 
+h2
+{
+    font-size: 28px;
+}
+
 .graphs
 {
     margin-top: 20px;
