@@ -48,22 +48,4 @@
     {% endfor %}
   </tr>
 </table>
-
-
-  <div class="row graphs">
-      {% for graph in graphs | sort(attribute='name')  %}
-        <div class="col-md-4">
-            <div id={{graph.name}} class="graph-render">
-                {% include '_graph.html' %}
-            </div>
-            {% if "documentation" in graph.graphite.properties %}
-            <div id={{graph.name+"-cp"}} class="graph-control-panel">
-                <div class="btn-group btn-group-vertical">
-                    <a class="btn btn-mini" href="{{graph.graphite.properties["documentation"]}}"><i class="icon-question-sign"></i></a>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-      {% endfor %}
-  </div>
 {% endblock %}
