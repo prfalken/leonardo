@@ -98,7 +98,15 @@ class GraphiteGraph:
 
         if properties.get("area"): url_parts.append( "areaMode=%s" % properties["area"] )
         if properties.get("hide_axes"): url_parts.append( "hideAxes=%s" % properties["hide_axes"] )
-        if properties.get("hide_legend"): url_parts.append( "hideLegend=%s" % properties["hide_legend"] )
+        hide_legend = properties.get("hide_legend")
+        if hide_legend is not None: 
+            if type(hide_legend) == int:
+                if properties.get('height') > hide_legend:
+                    url_parts.append( "hideLegend=False" )
+
+            else:
+                url_parts.append( "hideLegend=%s" % properties["hide_legend"] )
+
         if properties.get("hide_grid"): url_parts.append( "hideGrid=%s" % properties["hide_grid"] )
         if properties.get("hide_y_axis"): url_parts.append( "hideYAxis=%s" % properties["hide_y_axis"] )
 

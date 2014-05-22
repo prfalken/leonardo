@@ -53,8 +53,10 @@ This is just some text associated with the graph, it is not shown on any graph b
 
 ### *hide_legend*
 The main legend can be force disabled or enabled.  By default it will automatically be disabled if graphite thinks its too big but when set to _true_ it will always show and never when set to _false_
+You can also set it to an integer : it will hide the legend only if the graph's height is under this value.
 
     hide_legend: true
+    hide_legend: 400
 
 ### *ymin* and *ymax*
 These are the minimum and maximum values of the graph, only points between these will be shown.
