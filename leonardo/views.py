@@ -1,95 +1,20 @@
 from flask import request, render_template, make_response, redirect, Response, url_for
-import os
 import json
 import re
-from time import strftime, localtime
-import config
 from . import app
-import leonardo
 from graph import GraphiteGraph
 from log import LoggingException
 import urllib
+from leonardo import Leonardo
 
-class View:
-    def __init__(self):
-        self.options = config.YAML_CONFIG.get('options')
-
-        # where graphite lives
-        self.graphite_base = config.YAML_CONFIG.get('graphite')
-
-        # where the graphite renderer is
-        self.graphite_render = "%s/render/" % self.graphite_base
-
-        # where to find graph, dash etc templates
-        self.graph_templates = config.YAML_CONFIG.get('templatedir')
-
-        # the dash site might have a prefix for its css etc
-        self.prefix = self.options.get('prefix', "")
-
-        # the page refresh rate
-        self.refresh_rate = self.options.get('refresh_rate', 60)
-
-        # how many columns of graphs do you want on a page
-        self.graph_columns = self.options.get('graph_columns', 2)
-
-        # how wide each graph should be
-        self.graph_width = self.options.get('graph_width')
-
-        # how hight each graph sould be
-        self.graph_height = self.options.get('graph_height')
-
-        # Dashboard title
-        self.dash_title = self.options.get('title', 'Graphite Dashboard')
-
-        # Dashboard logo
-        self.dash_logo = self.options.get('logo')
-
-        # Time filters in interface
-        self.interval_filters = self.options.get('interval_filters', [])
-
-        self.intervals = self.options.get('intervals', [])
-
-        self.top_level = {}
-
-        for category in [ name for name in os.listdir(self.graph_templates)
-                                        if not name.startswith('.') and os.path.isdir(os.path.join(self.graph_templates, name)) ]:
-
-            if os.listdir( os.path.join(self.graph_templates,category) ) != []:
-
-                self.top_level[category] = leonardo.Leonardo( self.graphite_base,
-                                                              "/render/",
-                                                              self.graph_templates,
-                                                              category,
-                                                              { "width" : self.graph_width,
-                                                                "height" : self.graph_height
-                                                              }
-                                                            )
-
-        self.search_elements = [ "%s/%s" % (d['category'], d['name'])   for dash in self.top_level  for d in self.top_level[dash].dashboards() ]
-
-        elements_string = ""
-        for item in self.search_elements:
-            elements_string += '"%s",' % item
-        self.search_elements = "[%s]" % elements_string[:-1]
-
-    def fmt_for_select_date(self, date, default):
-        result = ""
-        try:
-            date = int(date)
-        except:
-            result = default
-        else:
-            result = strftime("%Y-%m-%d %H:%M", localtime(date) )
-        return result
-
-
-
-view = View()
 
 
 def get_dashboard_from_category(category, dash, options):
-    if view.top_level.get(category):
-        dashboard = view.top_level[category].dashboard(dash, options)
+
+    leonardo = Leonardo()
+
+    if leonardo.top_level.get(category):
+        dashboard = leonardo.top_level[category].dashboard(dash, options)
     else:
         raise LoggingException('Category %s does not exist' % category )
 
@@ -124,6 +49,8 @@ def zoom(request, dashboard):
 @app.route('/')
 def index():
 
+    leonardo = Leonardo()
+
     app.logger.debug(
         "responing to %s method on %s route" %
         (request.method, request.url)
@@ -136,24 +63,26 @@ def index():
         return redirect( url_for('dash', category = category, dash = dash) )
 
 
-    if view.top_level == {}:
+    if leonardo.top_level == {}:
         app.logger.warning("No dashboards found in the templates directory")
     dashboards_to_display = {}
-    for k in view.top_level:
-        dashboards_to_display[k] = [ d for d in view.top_level[k].dashboards() ]
+    for k in leonardo.top_level:
+        dashboards_to_display[k] = [ d for d in leonardo.top_level[k].dashboards() ]
 
-    return render_template("index.html", view = view, dashboards = dashboards_to_display)
+    return render_template("index.html", leonardo = leonardo, dashboards = dashboards_to_display)
 
 
 @app.route('/<category>/<dash>/', methods=['GET', 'POST'])
 def dash(category, dash, format='standard'):
+
+    leonardo = Leonardo()
 
     app.logger.debug(
         "responing to %s method on %s route" %
         (request.method, request.url)
     )
 
-    options = { 'graph_columns': view.graph_columns }
+    options = { 'graph_columns': leonardo.graph_columns }
     # Set a default time range, being -1 hour
     t_until = "now"
     t_from = "-1hour"
@@ -182,9 +111,9 @@ def dash(category, dash, format='standard'):
         dashboard.properties['favorite'] = True
 
     if request.args.get('full'):
-        resp = make_response( render_template("full.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to=None) )
+        resp = make_response( render_template("full.html", leonardo = leonardo, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to=None) )
     else:
-        resp = make_response( render_template("dashboard.html", view = view, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to='detail' ) )
+        resp = make_response( render_template("dashboard.html", leonardo = leonardo, dashboard = dashboard.properties, graphs = graphs, args = args_string, links_to='detail' ) )
 
     resp.set_cookie("from", str(options['from']))
     resp.set_cookie("until", str(options['until']))
@@ -204,12 +133,14 @@ def dash(category, dash, format='standard'):
 @app.route('/<category>/<dash>/details/<path:name>/', methods=['GET', 'POST'])
 def detail(category, dash, name, format='standard'):
 
+    leonardo = Leonardo()
+
     app.logger.debug(
         "responing to %s %s" %
         (request.method, request.url)
     )
 
-    options = { 'graph_columns': view.graph_columns }
+    options = { 'graph_columns': leonardo.graph_columns }
 
     # Build Dashboard
     dashboard = get_dashboard_from_category(category, dash, options)
@@ -218,7 +149,7 @@ def detail(category, dash, name, format='standard'):
     dashboard = zoom(request, dashboard)
 
     graphs = []
-    for e in view.intervals:
+    for e in leonardo.intervals:
         graph = dashboard.graph_by_name(name, options)
         title = "%s - %s" % ( graph['graphite'].properties['title'] , e[1] )
         new_props = { 'from': e[0] , 'nice_from': e[1] ,'title': title }
@@ -229,7 +160,7 @@ def detail(category, dash, name, format='standard'):
     if format == 'json':
         return graphs
 
-    resp = make_response( render_template("graphs_all_periods.html", view = view, dashboard = dashboard.properties, graphs = graphs, links_to="single") )
+    resp = make_response( render_template("graphs_all_periods.html", leonardo = leonardo, dashboard = dashboard.properties, graphs = graphs, links_to="single") )
 
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
                                                  'height': dashboard.properties['graph_height'],
@@ -245,10 +176,12 @@ def detail(category, dash, name, format='standard'):
 @app.route('/<category>/<dash>/single/<path:name>/', methods=['GET', 'POST'])
 def single(category, dash, name, format='standard'):
 
+    leonardo = Leonardo()
+
     # Set default width of a single graph to <default nb columns> times <default width>
-    single_width = view.graph_columns * view.graph_width
+    single_width = leonardo.graph_columns * leonardo.graph_width
     # Set default height of a single graph to twice the <default height>
-    single_height = 2 * view.graph_height
+    single_height = 2 * leonardo.graph_height
 
     # Get the time range from the navigator. Precedence: Query string > cookie > default.
     t_from = request.args.get( 'from', request.cookies.get('from', "-1hour"))
@@ -269,7 +202,7 @@ def single(category, dash, name, format='standard'):
     if format == 'json':
         return graph
 
-    resp = make_response( render_template("single.html", view = view, dashboard = dashboard.properties, graph = graph, links_to=None) )
+    resp = make_response( render_template("single.html", leonardo = leonardo, dashboard = dashboard.properties, graph = graph, links_to=None) )
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
                                                  'height': dashboard.properties['graph_height'],
                                                 }
@@ -285,6 +218,8 @@ def single(category, dash, name, format='standard'):
 @app.route('/api/<category>/<dash_name>/')
 def json_dashboard(category, dash_name):
 
+    leonardo = Leonardo()
+
     graphs = dash(category, dash_name, format='json')
     graph_list = json.dumps( [ g['graphite'].get_graph_spec() for g in graphs ] )
     return Response(graph_list)
@@ -293,12 +228,16 @@ def json_dashboard(category, dash_name):
 @app.route('/api/<category>/<dash_name>/details/<path:graph_name>/')
 def json_detailed(category, dash_name, graph_name):
 
+    leonardo = Leonardo()
+
     graphs = detail(category, dash_name, graph_name, format='json')
     graph_list = json.dumps( [ g['graphite'].get_graph_spec() for g in graphs ] )
     return Response(graph_list)
 
 @app.route('/api/<category>/<dash_name>/single/<path:graph_name>/')
 def json_single(category, dash_name, graph_name):
+
+    leonardo = Leonardo()
 
     graph = single(category, dash_name, graph_name, format='json')
     graph_spec = json.dumps( graph['graphite'].get_graph_spec() )
@@ -308,6 +247,8 @@ def json_single(category, dash_name, graph_name):
 
 @app.route('/search/')
 def search():
+
+    leonardo = Leonardo()
 
     app.logger.debug(
         "responing to %s %s" %
@@ -326,8 +267,8 @@ def search():
     dashboard_list = []
     if compare_with:
         dashboard_list = [compare_with]
-    for k in view.top_level:
-        for d in view.top_level[k].dashboards():
+    for k in leonardo.top_level:
+        for d in leonardo.top_level[k].dashboards():
             category_and_name = '%s/%s' % (d['category'], d['name'])
             if search_string and re.match(search_string, category_and_name, re.IGNORECASE):
                 dashboard_list.append(category_and_name)
@@ -342,6 +283,8 @@ def search():
 
 @app.route('/multiple/')
 def multiple(asked_dashboards = None):
+
+    leonardo = Leonardo()
 
     app.logger.debug(
         "responing to %s %s" %
@@ -360,15 +303,15 @@ def multiple(asked_dashboards = None):
     dashboard_list = []
     for db in asked_dashboards:
         category, name = db.split('/')
-        if view.top_level.get(category):
-            dashboard = view.top_level[category].dashboard(name, options)
+        if leonardo.top_level.get(category):
+            dashboard = leonardo.top_level[category].dashboard(name, options)
             dashboard.no_resize = True
             dashboard.graphs = dashboard.graphs()
             dashboard_list.append(dashboard)
 
     args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in request.args.items() ] )
 
-    resp = make_response( render_template("multiple.html", view = view, dashboard_list = dashboard_list, args = args_string ) )
+    resp = make_response( render_template("multiple.html", leonardo = leonardo, dashboard_list = dashboard_list, args = args_string ) )
 
     resp.set_cookie("from", str(options['from']))
     resp.set_cookie("until", str(options['until']))

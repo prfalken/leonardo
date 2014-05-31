@@ -1,41 +1,94 @@
+
 import os
-import yaml
-from dashboard import Dashboard
+import category
+import config
+from time import strftime, localtime
 
 
-class Leonardo:
-    def __init__(self, graphite_base, render_url, graph_templates, category,  options={}):
-        self.graphite_base = graphite_base
-        self.graphite_render = self.graphite_base + "/render/"
-        self.graph_templates = graph_templates
-        self.category = category
-        self.dash_templates = "%s/%s" % (graph_templates, category)
-        self.height = options.get('height')
-        self.width = options.get('width')
-        self.time_from = options.get('from')
-        self.until = options.get('until')
-        self.options = options
+class Leonardo(object):
+    ''' 
+    Top level Class that defines the initial configuration of Leonard
+    '''
 
-    def dashboard(self, name, options={}):
-        if not options.get('width'): options['width'] = self.width
-        if not options.get('height'): options['height'] = self.height
-        if not options.get('from'): options['from'] = self.time_from
-        if not options.get('until'): options['until'] = self.until
+    _instance = None
+    def __new__(cls, *args, **kwargs):
+        '''
+        Create a Singleton so that all views can call an unique instance of Leonardo
+        '''
+        if not cls._instance:
+            cls._instance = super(Leonardo, cls).__new__(
+                                cls, *args, **kwargs)
+        return cls._instance
 
-        return Dashboard(name, self.graph_templates, self.category, options, self.graphite_render)
 
-    def dashboards(self):
-        dashboards = []
-        for dash in sorted(os.listdir(self.dash_templates)):
-            if not dash.startswith('.'):
-                yaml_file = os.path.join(self.dash_templates, dash, "dash.yaml")
-                if os.path.exists(yaml_file):
-                    with open(yaml_file) as f:
-                        yaml_conf = yaml.load(f.read())
+    def __init__(self):
+        self.options = config.YAML_CONFIG.get('options')
 
-                    yaml_conf.update( { 'category' : self.category, 'link' : dash } ) 
-                    dashboards.append(yaml_conf)
+        # where graphite lives
+        self.graphite_base = config.YAML_CONFIG.get('graphite')
 
-        return dashboards
+        # where the graphite renderer is
+        self.graphite_render = "%s/render/" % self.graphite_base
 
+        # where to find graph, dash etc templates
+        self.graph_templates = config.YAML_CONFIG.get('templatedir')
+
+        # the dash site might have a prefix for its css etc
+        self.prefix = self.options.get('prefix', "")
+
+        # the page refresh rate
+        self.refresh_rate = self.options.get('refresh_rate', 60)
+
+        # how many columns of graphs do you want on a page
+        self.graph_columns = self.options.get('graph_columns', 2)
+
+        # how wide each graph should be
+        self.graph_width = self.options.get('graph_width')
+
+        # how hight each graph sould be
+        self.graph_height = self.options.get('graph_height')
+
+        # Dashboard title
+        self.dash_title = self.options.get('title', 'Graphite Dashboard')
+
+        # Dashboard logo
+        self.dash_logo = self.options.get('logo')
+
+        # Time filters in interface
+        self.interval_filters = self.options.get('interval_filters', [])
+
+        self.intervals = self.options.get('intervals', [])
+
+        self.top_level = {}
+
+        for category_name in [ name for name in os.listdir(self.graph_templates)
+                                        if not name.startswith('.') and os.path.isdir(os.path.join(self.graph_templates, name)) ]:
+
+            if os.listdir( os.path.join(self.graph_templates,category_name) ) != []:
+
+                self.top_level[category_name] = category.Category( self.graphite_base,
+                                                              "/render/",
+                                                              self.graph_templates,
+                                                              category_name,
+                                                              { "width" : self.graph_width,
+                                                                "height" : self.graph_height
+                                                              }
+                                                            )
+
+        self.search_elements = [ "%s/%s" % (d['category'], d['name'])   for dash in self.top_level  for d in self.top_level[dash].dashboards() ]
+
+        elements_string = ""
+        for item in self.search_elements:
+            elements_string += '"%s",' % item
+        self.search_elements = "[%s]" % elements_string[:-1]
+
+    def fmt_for_select_date(self, date, default):
+        result = ""
+        try:
+            date = int(date)
+        except:
+            result = default
+        else:
+            result = strftime("%Y-%m-%d %H:%M", localtime(date) )
+        return result
 

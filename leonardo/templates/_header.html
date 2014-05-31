@@ -9,18 +9,18 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="#">
-        {{ view.dash_title }}
+        {{ leonardo.dash_title }}
       </a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-9">
       <ul class="nav navbar-nav">
-        {% for category in view.top_level %}
+        {% for category in leonardo.top_level %}
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ category }} <b class="caret"></b></a>
             <ul class="dropdown-menu">
-              {% for board in view.top_level[category].dashboards() %}
+              {% for board in leonardo.top_level[category].dashboards() %}
                 <li><a href="{{ url_for("dash", category=category,
                     dash=board.link) }}">{{ board.name }}</a>
                 </li>
@@ -32,7 +32,7 @@
 
       <form name="dashboards" class="form-search navbar-form navbar-left" method="get" action="/search">
         <div class="form-group">
-          <input name="dashboard" class="form-control" type="text" placeholder="Dashboard..." data-provide="typeahead" data-items="10" data-source='{{ view.search_elements | safe }}' autocomplete="off" required />
+          <input name="dashboard" class="form-control" type="text" placeholder="Dashboard..." data-provide="typeahead" data-items="10" data-source='{{ leonardo.search_elements | safe }}' autocomplete="off" required />
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
       </form>

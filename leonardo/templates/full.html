@@ -10,7 +10,7 @@
     <tr>
       {% for graph in graphs | sort(attribute='name')  %}
       <td>
-          {% include 'graph.html' %}
+          {% include '_graph.html' %}
       </td>
       {% if not dashboard.no_resize and loop.index is divisibleby dashboard.graph_columns %}
         </tr>
@@ -23,7 +23,7 @@
 
 <script>
     $(document).ready(function() {
-        setInterval(reloadDash, {{ view.refresh_rate * 1000 }});
+        setInterval(reloadDash, {{ leonardo.refresh_rate * 1000 }});
     });
     function reloadDash() {
         var now = new Date();

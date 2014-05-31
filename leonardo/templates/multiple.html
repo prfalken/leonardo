@@ -13,7 +13,7 @@
     <tr>
       {% for graph in dashboard.graphs | sort(attribute='name')  %}
       <td class="td-padded">
-          {% include 'graph.html' %}
+          {% include '_graph.html' %}
       </td>
       {% endfor %}
       </span>

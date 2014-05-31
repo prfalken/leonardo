@@ -8,7 +8,7 @@
 	                    dash=dashboard.short_name, name=graph.name, from=graph.graphite.properties.from, until=graph.graphite.properties.to ) }}">
 
 	{% endif %}
-	    <img {% if dashboard.no_resize %}class="no-resize"{% endif %} src="{{ view.graphite_render }}?{{ graph.graphite.url() }}" title="{{ graph.graphite.title }}"  data-content="{{ graph.graphite.description }}"/>
+	    <img {% if dashboard.no_resize %}class="no-resize"{% endif %} src="{{ leonardo.graphite_render }}?{{ graph.graphite.url() }}" title="{{ graph.graphite.title }}"  data-content="{{ graph.graphite.description }}"/>
 	{% if links_to %}
 	</a>
 	{% endif %}
