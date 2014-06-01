@@ -3,6 +3,7 @@ python:
   - "2.7"
 before_script:
   - cp ./config/leonardo.yaml.example ./config/leonardo.yaml
+  - mkdir ./graphs
 # command to run tests
 script:
   - python setup.py nosetests
