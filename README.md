@@ -7,6 +7,7 @@ A Graphite Dashboard, massively inspired by the excellent [GDash](https://github
 It was rewritten in Python.
 
 Differences with Gdash :
+
 - Configuration is in full YAML instead of a DSL.
 - Ability to display multiple dashboards on a single page for comparison
 - Zoom in/out
@@ -29,6 +30,9 @@ If you want to run tests:
 
     # pip install nose
     # nosetests
+
+remember to make sure there is an empty 'graphs' directory in the root directory for testing.
+
 
 Main configuration example is included in config/leonardo.yaml.example, you should rename it to
 leonardo.yaml and adjust the main options here.

@@ -1,6 +1,5 @@
 import unittest
 import urlparse
-import json
 
 from leonardo import graph
 
@@ -10,14 +9,15 @@ from . import DATA_DIR
 class GraphTest(unittest.TestCase):
     
     maxDiff = None
+    def setUp(self):
+        self.g = graph.GraphiteGraph("%s/graphs/System/server-1/cpu.graph" % DATA_DIR)
+
 
     def test_graph_init(self):
-        g = graph.GraphiteGraph("%s/cpu.graph" % DATA_DIR)
-        self.assertEqual( g.properties.get("title") , "Combined CPU Usage")
+        self.assertEqual( self.g.properties.get("title") , "Combined CPU Usage")
 
     def test_url(self):
-        g = graph.GraphiteGraph("%s/cpu.graph" % DATA_DIR)
-        parts = urlparse.parse_qs( g.url(), keep_blank_values=True)
+        parts = urlparse.parse_qs( self.g.url(), keep_blank_values=True)
         self.assertEqual ( parts, 
             {   'from'  : ['-1hour'], 
                 'target': ['cactiStyle(alias(sumSeries(collectd.server-1.cpu.*.cpu.wait.value),"IO Wait"),"si")', 
@@ -33,7 +33,6 @@ class GraphTest(unittest.TestCase):
         )
 
     def test_get_graph_spec(self):
-        g = graph.GraphiteGraph("%s/cpu.graph" % DATA_DIR)
         expected_result = {     'url': 'title=Combined CPU Usage&vtitle=percent&from=-1hour&width=None&height=None&until=Now&areaMode=stacked&target=cactiStyle(alias(sumSeries(collectd.server-1.cpu.*.cpu.wait.value),"IO Wait"),"si")&target=cactiStyle(alias(sumSeries(collectd.server-1.cpu.*.cpu.system.value),"System"),"si")&target=cactiStyle(alias(sumSeries(collectd.server-1.cpu.*.cpu.user.value),"User"),"si")&format=json',
                                 'properties':
                                 {   'ymaxright': None,
@@ -76,5 +75,5 @@ class GraphTest(unittest.TestCase):
                                     'margin': None,
                                     'color_list': None}}
 
-        self.assertEqual( expected_result, g.get_graph_spec()  )
+        self.assertEqual( expected_result, self.g.get_graph_spec()  )
 
