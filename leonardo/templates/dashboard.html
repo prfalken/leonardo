@@ -9,7 +9,7 @@
 <div class="row title">
   <h2 class="col-md-8">
     <span id="fav_star" {% if dashboard.favorite %}class="star-lit"{% else %}class="star"{% endif %}></span>
-    {{ dashboard.category }} / {{ dashboard.short_name }}
+    <a href="{{ url_for( "category", category=dashboard.category) }}">{{ dashboard.category }}</a> / {{ dashboard.short_name }}
     <small>{{ dashboard.description }}</small>
   </h2>
     <div class="col-md-4">

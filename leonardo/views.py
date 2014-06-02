@@ -71,6 +71,21 @@ def index():
 
     return render_template("index.html", leonardo = leonardo, dashboards = dashboards_to_display)
 
+@app.route('/<category>/')
+def category(category):
+
+    leonardo = Leonardo()
+
+    app.logger.debug(
+        "responing to %s method on %s route" %
+        (request.method, request.url)
+    )
+
+    dashboards_to_display = { category : [ d for d in leonardo.top_level[category].dashboards() ] }
+
+    return render_template("index.html", leonardo = leonardo, dashboards = dashboards_to_display)
+
+
 
 @app.route('/<category>/<dash>/', methods=['GET', 'POST'])
 def dash(category, dash, format='standard'):

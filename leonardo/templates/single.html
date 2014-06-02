@@ -2,7 +2,7 @@
 
 {% block content %}
   <h2>
-  {{ dashboard.category }}
+  <a href="{{ url_for( "category", category=dashboard.category) }}">{{ dashboard.category }}</a>
             / <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a>
             / {{ graph.graphite.properties.title }}
   </h2>

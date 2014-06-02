@@ -3,7 +3,7 @@
 {% block content %}
 
 {%  for category in dashboards recursive %}
-<h3>{{ category }}</h3>
+<h3><a href="{{ url_for( "category", category=category) }}">{{ category }}</a></h3>
 
 <table class="table">
     <thead>

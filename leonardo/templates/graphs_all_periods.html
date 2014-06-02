@@ -9,7 +9,12 @@
 {% block content %}
 <div class="row">
   <div class="col-md-10">
-    <h2>{{ graph_title }}&nbsp;<small>in <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a></small></h2>
+  <h2>
+  <a href="{{ url_for( "category", category=dashboard.category) }}">{{ dashboard.category }}</a>
+            / <a href="{{ url_for( "dash", category=dashboard.category, dash=dashboard.short_name) }}">{{ dashboard.short_name }}</a>
+            / {{ graph_title }}
+  </h2>
+
   </div>
   <div class="col-md-2">
     {% include '_zoom_box.html' %}
