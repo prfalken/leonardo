@@ -10,18 +10,23 @@ class Leonardo(object):
     Top level Class that defines the initial configuration of Leonard
     '''
 
-    _instance = None
-    def __new__(cls, *args, **kwargs):
+    __instance = None
+    def __new__(cls):
         '''
         Create a Singleton so that all views can call an unique instance of Leonardo
         '''
-        if not cls._instance:
-            cls._instance = super(Leonardo, cls).__new__(
-                                cls, *args, **kwargs)
-        return cls._instance
+
+        if cls.__instance is None:
+            cls.__instance = super(Leonardo,cls).__new__(cls)
+            cls.__instance.__initialized = False
+        return cls.__instance
 
 
     def __init__(self):
+        if(self.__initialized): return
+        self.__initialized = True
+        print 'init LEONARDO #########################################################################################################################'
+
         self.options = config.YAML_CONFIG.get('options')
 
         # where graphite lives
