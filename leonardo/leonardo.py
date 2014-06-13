@@ -25,7 +25,6 @@ class Leonardo(object):
     def __init__(self):
         if(self.__initialized): return
         self.__initialized = True
-        print 'init LEONARDO #########################################################################################################################'
 
         self.options = config.YAML_CONFIG.get('options')
 
