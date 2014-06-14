@@ -9,13 +9,15 @@ class ViewsTest(unittest.TestCase):
         '''
         creates a fake category and points it to a dashboard in the tests directory.
         '''
+        l = leonardo.leonardo.Leonardo()
         c = leonardo.category.Category
         d_options = {'graph_columns': 2}
         d = leonardo.dashboard.Dashboard('server-1', 'tests/data/graphs', 'System', d_options )
         c.dashboard = Mock()
         c.dashboard.return_value = d
-        leonardo.views.get_dashboard_from_category = Mock()
-        leonardo.views.get_dashboard_from_category.return_value = d
+
+        l.top_level['System'].dashboard = Mock()
+        l.top_level['System'].dashboard.return_value = d
 
         self.app = leonardo.app.test_client()
 
