@@ -1,4 +1,4 @@
-from . import views
+from . import frontend
 from . import api
 from . import errors
 from . import search

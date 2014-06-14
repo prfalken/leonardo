@@ -5,3 +5,4 @@ app = Flask(__name__)
 import log
 import views
 
+app.register_blueprint(views.api.api)

@@ -3,7 +3,6 @@ import json
 import urllib
 from .. import app
 from ..graph import GraphiteGraph
-from ..log import LoggingException
 from ..leonardo import Leonardo
 from helpers import zoom
 
