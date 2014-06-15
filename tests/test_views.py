@@ -15,7 +15,9 @@ class ViewsTest(unittest.TestCase):
         d = leonardo.dashboard.Dashboard('server-1', 'tests/data/graphs', 'System', d_options )
         c.dashboard = Mock()
         c.dashboard.return_value = d
-
+        c.dashboards = Mock()
+        c.dashboards.return_value = [d]
+        l.top_level['System'] = c
         l.top_level['System'].dashboard = Mock()
         l.top_level['System'].dashboard.return_value = d
 
