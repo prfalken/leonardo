@@ -83,6 +83,11 @@ body.full {
     line-height: 30px;
 }
 
+.graph-row
+{
+    padding-bottom: 10px;
+}
+
 img.no-resize {
     border: 1px solid #aaa;
     -webkit-border-radius: 3px;

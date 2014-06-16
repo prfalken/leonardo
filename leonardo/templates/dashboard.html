@@ -24,10 +24,9 @@
 </div>
 
 
-<table>
-  <tr>
+  <div class="row graph-row">
     {% for graph in graphs | sort(attribute='name')  %}
-    <td class="td-padded">
+    <div class="col-md-{{ (12 / dashboard.graph_columns) | int}}">
       <div class="graph">
           <div id={{graph.name}} class="graph-render">
               {% include '_graph.html' %}
@@ -54,12 +53,11 @@
           {% endif %}
           </div>
       </div>
-    </td>
+    </div>
     {% if not dashboard.no_resize and loop.index is divisibleby dashboard.graph_columns %}
-      </tr>
-      <tr>
+      </div>
+      <div class="row graph-row">
     {% endif %}
     {% endfor %}
-  </tr>
-</table>
+  </div class="row">
 {% endblock %}
