@@ -62,28 +62,28 @@ class GraphiteGraph:
     def load_graph(self):
         self.targets = {}
         self.target_order = []
-        yaml_spec = {}
+        self.yaml_spec = {}
         with open(self.file, 'r') as graph_file:
             p = Parser()
             try:
-                yaml_spec = p.parse(graph_file.read())
+                self.yaml_spec = p.parse(graph_file.read())
             except Exception as e:
                 raise LoggingException('Could not parse yaml file %s. Error was : %s' % (self.file, e) )
 
 
 
-        for key in yaml_spec:
+        for key in self.yaml_spec:
             if key != 'fields':
-                self.properties[key] = yaml_spec[key]
+                self.properties[key] = self.yaml_spec[key]
 
-        for field in yaml_spec['fields']:
-            self.targets[field] = yaml_spec['fields'][field]
+        for field in self.yaml_spec['fields']:
+            self.targets[field] = self.yaml_spec['fields'][field]
             self.target_order.append(field)
 
 
 
     def get_graph_spec(self):
-        return { 'url': self.url() + '&format=json' , 'properties': self.properties }
+        return { 'url': self.url() + '&format=json' , 'properties': self.properties, 'yaml_file' : self.yaml_spec }
 
 
     def url(self):

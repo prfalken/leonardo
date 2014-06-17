@@ -73,7 +73,23 @@ class GraphTest(unittest.TestCase):
                                     'xformat': None,
                                     'hide_legend': None,
                                     'margin': None,
-                                    'color_list': None}}
+                                    'color_list': None
+                                },
+                                'yaml_file': {'area': 'stacked',
+                                                'description': 'The combined CPU usage',
+                                                'fields': {'iowait': {'alias': 'IO Wait',
+                                                                      'cacti_style': 'si',
+                                                                      'data': 'sumSeries(collectd.server-1.cpu.*.cpu.wait.value)'},
+                                                           'system': {'alias': 'System',
+                                                                      'cacti_style': 'si',
+                                                                      'data': 'sumSeries(collectd.server-1.cpu.*.cpu.system.value)'},
+                                                           'user': {'alias': 'User',
+                                                                    'cacti_style': 'si',
+                                                                    'data': 'sumSeries(collectd.server-1.cpu.*.cpu.user.value)'}},
+                                                'title': 'Combined CPU Usage',
+                                                'vtitle': 'percent'
+                                             }
+                            }
 
         self.assertEqual( expected_result, self.g.get_graph_spec()  )
 

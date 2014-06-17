@@ -49,7 +49,7 @@ def category(category):
 
 
 @app.route('/<category>/<dash>/', methods=['GET', 'POST'])
-def dash(category, dash, format='standard'):
+def dash(category, dash):
 
     leonardo = Leonardo()
 
@@ -78,9 +78,6 @@ def dash(category, dash, format='standard'):
     # Build dashboard's graphs
     graphs = dashboard.graphs()
 
-    if format == 'json':
-        return graphs
-
     # check if dashboard is set as favorite
     favorite_dashboard = request.cookies.get('favorite', '')
     if urllib.unquote( favorite_dashboard ) == request.path:
@@ -107,7 +104,7 @@ def dash(category, dash, format='standard'):
 
 
 @app.route('/<category>/<dash>/details/<path:name>/', methods=['GET', 'POST'])
-def detail(category, dash, name, format='standard'):
+def detail(category, dash, name):
 
     leonardo = Leonardo()
 
@@ -133,9 +130,6 @@ def detail(category, dash, name, format='standard'):
         graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
         graphs.append(graph)
 
-    if format == 'json':
-        return graphs
-
     resp = make_response( render_template("graphs_all_periods.html", leonardo = leonardo, dashboard = dashboard.properties, graphs = graphs, links_to="single") )
 
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
@@ -150,7 +144,7 @@ def detail(category, dash, name, format='standard'):
 
 
 @app.route('/<category>/<dash>/single/<path:name>/', methods=['GET', 'POST'])
-def single(category, dash, name, format='standard'):
+def single(category, dash, name):
 
     leonardo = Leonardo()
 
@@ -174,9 +168,6 @@ def single(category, dash, name, format='standard'):
     graph['graphite'] = GraphiteGraph( graph['graphite'].file, graph['graphite'].properties)
     new_props = { 'from': t_from, 'until': t_until, 'width': single_width, 'height': single_height }
     graph['graphite'].properties.update( new_props )
-
-    if format == 'json':
-        return graph
 
     resp = make_response( render_template("single.html", leonardo = leonardo, dashboard = dashboard.properties, graph = graph, links_to=None) )
     resp.set_cookie( 'graph_topo', json.dumps( { 'width': dashboard.properties['graph_width'],
