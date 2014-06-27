@@ -170,3 +170,13 @@ $(document).on('click', '.star-lit', function(){
     $(this).attr('class', 'star');
     $.removeCookie("favorite", { path: '/' });
 });
+
+
+$(function(){
+    var needed_width = $('div.needed-width').width();
+    $('div.graph img').each(function() {
+        $(this).attr("src", $(this).attr('data-src').replace(/&width=[0-9]+/, "&width=" + needed_width));
+    });
+    console.log(needed_width);
+});
+

@@ -26,9 +26,9 @@
 
   <div class="row graph-row">
     {% for graph in graphs | sort(attribute='name')  %}
-    <div class="col-md-{{ (12 / dashboard.graph_columns) | int}}">
+    <div class="col-md-{{ (12 / dashboard.graph_columns) | int}} needed-width">
       <div class="graph">
-          <div id={{graph.name}} class="graph-render">
+          <div id="{{graph.name}}" class="graph-render">
               {% include '_graph.html' %}
           </div>
           <div id={{graph.name+"-cp"}} class="graph-control-panel">

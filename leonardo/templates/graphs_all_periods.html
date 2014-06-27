@@ -21,18 +21,13 @@
   </div>
 </div>
 
-<div>
-  <table align=center>
     {% for graph in graphs %}
-    <tr>
-      <td class="td-padded">
-          <div>
+      <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-4 needed-width">
             {% set title = graph.graphite.properties.nice_from %}
             {% include '_graph.html' %}
           </div>
-      </td>
-    </tr>
+      </div>
     {% endfor %}
-  </table>
-</div>
 {% endblock %}

@@ -8,11 +8,13 @@
 	                    dash=dashboard.short_name, name=graph.name, from=graph.graphite.properties.from, until=graph.graphite.properties.to ) }}">
 
 	{% endif %}
-	    <img {% if dashboard.no_resize %}class="no-resize"{% endif %} src="{{ leonardo.graphite_render }}?{{ graph.graphite.url() }}" title="{{ graph.graphite.title }}"  data-content="{{ graph.graphite.description }}"/>
+	    <img {% if dashboard.no_resize %}class="no-resize"{% endif %} data-src="{{ leonardo.graphite_render }}?{{ graph.graphite.url() }}" src='/static/img/loading.gif' title="{{ graph.graphite.title }}"  data-content="{{ graph.graphite.description }}" graph_columns="{{dashboard.graph_columns}}"/>
 	{% if links_to %}
 	</a>
 	{% endif %}
 	{% if title %}
-		<h3>{{ title }}</h3>
+	    <div align="center">
+			<h3>{{ title }}</h3>
+		</div>
 	{% endif %}
 </div>
