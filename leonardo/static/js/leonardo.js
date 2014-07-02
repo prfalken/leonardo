@@ -177,6 +177,5 @@ $(function(){
     $('div.graph img').each(function() {
         $(this).attr("src", $(this).attr('data-src').replace(/&width=[0-9]+/, "&width=" + needed_width));
     });
-    console.log(needed_width);
 });
 

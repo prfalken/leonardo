@@ -186,8 +186,6 @@ class GraphiteGraph:
                 graphite_target = """aliasSub(%s,"%s","%s")""" % ( graphite_target, target_props['alias_sub_search'], target_props['alias_sub_replace'] )
             elif 'alias' in target_props:
                 graphite_target = """alias(%s,"%s")""" % ( graphite_target, target_props['alias'])
-            else:
-                graphite_target = """alias(%s, "%s")""" % (graphite_target, target)
 
             if 'cacti_style' in target_props: 
                 graphite_target = 'cactiStyle(%s,"%s")' % ( graphite_target, target_props['cacti_style'] )

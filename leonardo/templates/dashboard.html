@@ -32,25 +32,7 @@
               {% include '_graph.html' %}
           </div>
           <div id={{graph.name+"-cp"}} class="graph-control-panel">
-              <div class="btn-group btn-group-vertical">
-                  <a class="btn btn-xs" href="{{ url_for("single", category=dashboard.category,
-                      dash=dashboard.short_name, name=graph.name, from=graph.graphite.properties.from, until=graph.graphite.properties.to ) }}">
-                      <span class="glyphicon glyphicon-zoom-in">
-                      </span>
-                  </a>
-              </div>              
-              <div class="btn-group btn-group-vertical">
-                  <a class="btn btn-xs" href="{{ leonardo.graphite_render }}?{{ graph.graphite.url() }}">
-                      <span class="glyphicon glyphicon-share-alt">
-                      </span>
-                  </a>
-              </div>              
-
-          {% if "documentation" in graph.graphite.properties %}
-              <div class="btn-group btn-group-vertical">
-                  <a class="btn btn-xs" href="{{graph.graphite.properties["documentation"]}}"><span class="glyphicon glyphicon-question-sign"></span></a>
-              </div>
-          {% endif %}
+            {% include '_control-panel.html' %}
           </div>
       </div>
     </div>

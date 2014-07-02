@@ -77,6 +77,13 @@ class Dashboard:
         graphs = {}
         directory = self.properties['directory']
         current_graphs = [ f for f in os.listdir(directory) if fnmatch.fnmatch(f, '*.graph') ]
+
+        # if there is less graphs than columns, override graph_columns
+        # to the number of graphs        
+        graph_columns = self.properties.get('graph_columns')
+        if graph_columns:
+            if len(current_graphs) < graph_columns:
+                self.properties['graph_columns'] = len(current_graphs)
         
         for graph_filename in current_graphs:
             graph_name = os.path.splitext(graph_filename)[0]
