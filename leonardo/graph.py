@@ -80,6 +80,8 @@ class GraphiteGraph:
             self.targets[field] = self.yaml_spec['fields'][field]
             self.target_order.append(field)
 
+        if 'field_order' in self.yaml_spec:
+            self.target_order = self.yaml_spec['field_order']
 
 
     def get_graph_spec(self):
