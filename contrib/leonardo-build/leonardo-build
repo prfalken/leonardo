@@ -1,0 +1,322 @@
+#!/bin/sh
+
+# leonardo-build - create config hierarchy for leonardo based on
+# graphite files from collectd
+# i.e. automatically create a browseable per-server set of standard graphs
+
+# A whole bunch of embedded here doc templates - maybe not the best approach
+# REMEMBER: yaml files must not contain tabs, and it causes leonardo
+# to fail badly
+
+# Based on graph configurations in the leonardo sample configs.
+# Use/abuse/modify as you wish
+# Original script by John Sellens jsellens@syonex.com
+
+
+PATH="/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/sbin:/usr/sbin"
+export PATH
+umask 022
+
+myname=`basename "$0"`
+# tmp1="/tmp/$myname.1.$$"
+# tmp2="/tmp/$myname.2.$$"
+# rm -rf "$tmp1" "$tmp2"
+# trap "rm -rf '$tmp1' '$tmp2'" EXIT
+
+verbose=true
+# verbose=false
+
+cdir="/opt/graphite/storage/whisper/collectd"
+ldir="/opt/leonardo/leonardo/graphs"
+
+err=0
+
+logit() {
+    if [ $# -gt 0 ]; then
+	logger -t "$myname" -p user.info -- "$$ - $@"
+    else
+	xargs -L 1 -r logger -t "$myname" -p user.info -- "$$ -"
+    fi
+}
+logerr() {
+    if [ $# -gt 0 ]; then
+	logger -t "$myname" -p user.error -- "$$ - $@"
+    else
+	xargs -L 1 -r logger -t "$myname" -p user.error -- "$$ -"
+    fi
+}
+
+fyi() {
+    echo "$myname: FYI:" "$@"
+    logit "$@"
+}
+
+error() {
+    echo 1>&2 "$myname:" "$@"
+    logerr "$@"
+    err=1
+}
+
+fatal() {
+    error "$@"
+    # some OS's don't let you remove the current directory (AIX?)
+    cd /
+    exit 1
+}
+
+usage() {
+    fatal "usage: $myname"
+}
+
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+	--)
+	    shift
+	    break
+	    ;;
+	-*)
+	    usage
+	    ;;
+	*)
+	    break
+	    ;;
+    esac
+    shift
+done
+
+if [ $# -gt 0 ]; then
+    error unexpected arguments: "$@"
+    usage
+fi
+
+test -d "$cdir" || fatal not a directory: "$cdir"
+cd "$cdir" || fatal could not cd "$cdir"
+test -d "$ldir" || fatal not a directory: "$ldir"
+
+ls \
+| while read hdir ; do
+    if [ ! -d "$hdir" ]; then
+	error not a directory, skipping: "$cdir/$hdir"
+	continue
+    fi
+    host=`echo "$hdir" | sed -e 's/_/./g'`
+    domain=`echo "$host" | sed -e 's/^[^\.]*\.//'`
+    # echo $hdir $host $domain
+    dest="$ldir/$domain/$host"
+    mkdir -p "$dest"
+    cat <<EOF | expand > "$dest/dash.yaml"
+name: $host
+description: collectd stats
+
+include_properties:
+    - common.yaml
+EOF
+
+    cat <<EOF | expand > "$dest/10-cpu.graph"
+title: Combined CPU Usage for $host
+vtitle: percent
+area: stacked
+description: Combined CPU Usage for $host
+
+fields:
+    iowait:
+        alias: IO Wait
+        data: sumSeries(collectd.${hdir}.cpu-*.cpu-wait)
+        cacti_style: si
+
+    system:
+        alias: "System "
+        data: sumSeries(collectd.${hdir}.cpu-*.cpu-system)
+        cacti_style: si
+
+    user:
+        alias: "User   "
+        data: sumSeries(collectd.${hdir}.cpu-*.cpu-user)
+        cacti_style: si
+
+    nice:
+        alias: "Nice   "
+        data: sumSeries(collectd.${hdir}.cpu-*.cpu-nice)
+        cacti_style: si
+
+#    idle:
+#        alias: "Idle   "
+#        data: sumSeries(collectd.${hdir}.cpu-*.cpu-idle)
+#        cacti_style: si
+EOF
+
+    cat <<EOF | expand > "$dest/20-load.graph"
+title: Load Average for $host
+vtitle: Load
+area: first
+description: Load Average for $host
+
+fields:
+    short:
+        color: yellow
+        alias: 1  min avg
+        data: sumSeries(collectd.${hdir}.load.load.shortterm)
+        cacti_style: si
+
+    mid:
+        color: orange
+        alias: 5  min avg
+        data: sumSeries(collectd.${hdir}.load.load.midterm)
+        cacti_style: si
+
+    long:
+        color: red
+        alias: 15 min avg
+        data: sumSeries(collectd.${hdir}.load.load.longterm)
+        cacti_style: si
+EOF
+
+    cat <<EOF | expand > "$dest/30-memory.graph"
+title: Memory Usage for $host
+vtitle: Bytes
+area: stacked
+
+fields:
+    used:
+        color: red
+        alias: "Used    "
+        data: sumSeries(collectd.${hdir}.memory.memory-used)
+        cacti_style: si
+
+    buffered:
+        color: purple
+        alias: Buffered
+        data: sumSeries(collectd.${hdir}.memory.memory-buffered)
+        cacti_style: si
+
+    cached:
+        color: blue
+        alias: "Cached  "
+        data: sumSeries(collectd.${hdir}.memory.memory-cached)
+        cacti_style: si
+EOF
+
+# interface loop
+for i in ${hdir}/interface-* ; do
+    if [ ! -d "$i" ]; then
+	# likely we had no match - no interfaces
+	continue
+    fi
+    interface=`echo "$i" | sed -e 's/.*interface-//'`
+cat <<EOF | expand > "$dest/40-net_${interface}.graph"
+title: Network Usage $interface for $host
+vtitle: Bits
+area: first
+
+fields:
+    up_${interface}:
+        color: blue
+        alias: Out
+        scale: '8'
+        data: sumSeries(collectd.${hdir}.interface-${interface}.if_octets.tx)
+        cacti_style: si
+
+    down_${interface}:
+        color: green
+        alias: "In "
+        scale: '8'
+        data: sumSeries(collectd.${hdir}.interface-${interface}.if_octets.rx)
+        cacti_style: si
+EOF
+
+done
+
+# disk loop
+for i in ${hdir}/disk-* ; do
+    if [ ! -d "$i" ]; then
+        # likely we had no match - no disks
+        continue
+    fi
+    disk=`echo "$i" | sed -e 's/.*disk-//'`
+    cat <<EOF | expand > "$dest/50-disk_${disk}_octets.graph"
+title: Disk ${disk} Octets for $host
+vtitle: Bytes/s
+description: Disk Bytes/s ${disk} for ${host}
+
+fields:
+    read:
+	alias: ${disk} Read  bytes/s
+        color: blue
+        data: sumSeries(collectd.${hdir}.disk-${disk}.disk_octets.read)
+        cacti_style: si
+
+    write:
+	alias: ${disk} Write bytes/s
+        color: green
+        data: sumSeries(collectd.${hdir}.disk-${disk}.disk_octets.write)
+        cacti_style: si
+EOF
+    cat <<EOF | expand > "$dest/60-disk_${disk}_ops.graph"
+title: Disk ${disk} Operations for ${host}
+vtitle: Ops/s
+description: Disk Operations ${disk} for ${host}
+
+fields:
+    read:
+	alias: ${disk} Read  ops
+        color: blue
+        data: sumSeries(collectd.${hdir}.disk-${disk}.disk_ops.read)
+        cacti_style: si
+
+    write:
+	alias: ${disk} Write ops
+        color: green
+        data: sumSeries(collectd.${hdir}.disk-${disk}.disk_ops.write)
+        cacti_style: si
+EOF
+
+done
+
+# df loop
+for i in ${hdir}/df-* ; do
+    if [ ! -d "$i" ]; then
+        # likely we had no match - no disks?
+        continue
+    fi
+    disk=`echo "$i" | sed -e 's/.*df-//'`
+    case "$disk" in
+	dev|dev-shm|sys-fs-cgroup|run)
+	    continue
+	    ;;
+    esac
+    cat <<EOF | expand > "$dest/90-df_${disk}.graph"
+title: Disk Usage $disk for ${host}
+vtitle: "%"
+description: Disk Usage $disk for ${host}
+area: stacked
+linewidth: 0.8
+area_alpha: 0.7
+ymin: 0
+
+fields:
+    used:
+	alias: ${disk} Used
+        color: orange
+        data: asPercent(collectd.${hdir}.df-${disk}.df_complex-used, sumSeries(collectd.${hdir}.df-${disk}.df_complex-*))
+        cacti_style: si
+
+    free:
+	alias: ${disk} Free
+        color: green
+        data: asPercent(collectd.${hdir}.df-${disk}.df_complex-free, sumSeries(collectd.${hdir}.df-${disk}.df_complex-*))
+        cacti_style: si
+EOF
+
+done
+
+done
+
+# And we hope this will trigger any existing leonardo's to restart/rescan
+# This can sometimes generate noise warnings
+apachectl graceful > /dev/null 2>&1
+
+
+# some OS's don't let you remove the current directory (AIX?)
+cd /
+exit $err
