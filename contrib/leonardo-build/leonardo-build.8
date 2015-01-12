@@ -1,0 +1,24 @@
+.TH LEONARDO-BUILD 8
+.SH NAME
+leanordo-build \- build leonardo graph config yaml files for collectd data
+.SH SYNOPSIS
+.B leonardo-build
+.SH DESCRIPTION
+.B leonardo-build
+builds leonardo config files based on the collectd data
+that exists in a graphite server.
+.PP
+i.e. It automatically creates a browseable per-server set of standard graphs.
+.PP
+It uses a bunch of here document templates in the script itself,
+rather than separate template files.  This is somewhat uglier,
+but simpler.
+.PP
+Run periodically from cron, to pick up any new servers that are
+sending data from collectd to this graphite server.
+.PP
+Based on graph configurations in the leonardo sample configs.
+.SH AUTHOR
+Original script by John Sellens jsellens@syonex.com
+.br
+Use/abuse/modify as you wish
