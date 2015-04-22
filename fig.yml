@@ -1,0 +1,25 @@
+graphite:
+  image: nickstenning/graphite
+  ports:
+    - "80:80"
+
+collectd:
+  image: revett/collectd
+  environment:
+    CONFIG_TYPE: graphite
+    EP_HOST: graphite
+    EP_PORT: 2003
+  links:
+    - graphite
+ 
+leonardo:
+  build: .
+  command: ./run.py
+#  image: prfalken/leonardo
+  environment:
+    GRAPHITE_SERVER: http://192.168.59.103
+  links:
+    - graphite
+  ports:
+    - "5000:5000"
+
