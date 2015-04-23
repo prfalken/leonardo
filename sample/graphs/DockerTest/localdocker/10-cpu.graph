@@ -1,0 +1,24 @@
+title: Combined CPU Usage
+vtitle: percent
+area: stacked
+description: The combined CPU usage
+
+fields:
+    main: 
+        data: > 
+                exclude(
+                  aliasByNode(
+                    asPercent(
+                      group(                  
+                        sumSeries(local.debug.collectd-docker.cpu-*.cpu-nice),                  
+                        sumSeries(local.debug.collectd-docker.cpu-*.cpu-interrupt),                  
+                        sumSeries(local.debug.collectd-docker.cpu-*.cpu-steal),                  
+                        sumSeries(local.debug.collectd-docker.cpu-*.cpu-softirq),                  
+                        sumSeries(local.debug.collectd-docker.cpu-*.cpu-system),                  
+                        sumSeries(local.debug.collectd-docker.cpu-*.cpu-user),                  
+                        sumSeries(local.debug.collectd-docker.cpu-*.cpu-wait),  
+                        sumSeries(local.debug.collectd-docker.cpu-*.cpu-idle)              
+                        )
+                      )
+                    ,4)
+                ,'idle')

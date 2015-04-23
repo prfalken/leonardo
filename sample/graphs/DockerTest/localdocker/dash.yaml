@@ -1,0 +1,5 @@
+name: localdocker
+description: System Metrics
+
+include_properties: 
+    - common.yaml

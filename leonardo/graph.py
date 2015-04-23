@@ -1,4 +1,5 @@
 import yaml
+from log import LoggingException
 
 class Parser:
     def parse(self, input_string):

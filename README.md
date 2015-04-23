@@ -15,7 +15,7 @@ Differences with Gdash :
 
 ![Sample dashboard](https://github.com/prfalken/leonardo/raw/master/sample/dashboard.jpg)
 
-Configuration
+Installation
 -------------
 
 This dashboard is a Flask application. Have a look at [this documentation](http://flask.pocoo.org/docs/deploying/) if you want to deploy it in a production environment.
@@ -33,6 +33,31 @@ If you want to run tests:
 
 remember to make sure there is an empty 'graphs' directory in the root directory for testing.
 
+Test environment with Docker and Fig (now docker-compose)
+---------------------------------------------------------
+You can run a fully functionnal test environment with Graphite, Collectd and Leonardo.
+
+    # vi fig.yml
+
+change the GRAPHITE_SERVER variable to your docker host IP address. If you use boot2docker, you can get it with :
+
+    # boot2docker ip
+
+Then build your leonardo container :
+
+    # fig build
+
+Now run the full environment :
+
+    # fig up
+
+This will launch a collectd container that will send your CPU metrics to a carbon/graphite container. then it will launch your Leonardo container. You can then open your browser to :
+
+    open http://$(boot2docker ip):5000
+
+
+Configuration
+-------------
 
 Main configuration example is included in config/leonardo.yaml.example, you should rename it to
 leonardo.yaml and adjust the main options here.
