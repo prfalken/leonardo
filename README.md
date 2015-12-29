@@ -113,7 +113,7 @@ here is a sample:
         user:
             color: 4169E1
             alias: User
-            data: sumSeries(collectd.server.cpu.*.cpu.user.value)
+            data: sumSeries(collectd.server-1.cpu.*.cpu.user.value)
             cacti_style: si
 
 Template Directory Layout
