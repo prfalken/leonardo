@@ -187,6 +187,8 @@ class GraphiteGraph:
                 graphite_target = "aliasByNode(%s,%s)" % ( graphite_target, target_props['alias_by_node'])
             elif 'alias_sub_search' in target_props:
                 graphite_target = """aliasSub(%s,"%s","%s")""" % ( graphite_target, target_props['alias_sub_search'], target_props['alias_sub_replace'] )
+            elif 'substr' in target_props:
+                graphite_target = "substr(%s,%s)" % ( graphite_target, target_props['substr'])
             elif 'alias' in target_props:
                 graphite_target = """alias(%s,"%s")""" % ( graphite_target, target_props['alias'])
 
