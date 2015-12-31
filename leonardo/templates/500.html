@@ -21,7 +21,7 @@
         <p>... or look for another Dashboard</p>
 
         <div style:"" class="nav input-append">
-            <form id="form-search" name="dashboards" class="form-search" method="get" action="/search">
+            <form id="form-search" name="dashboards" class="form-search" method="get" action="{{ url_for("search") }}">
                 <div class="input-append">
                     <input class="search-query" name="dashboard" type="text" placeholder="Dashboard..." required />
                     <button class="btn btn-primary" type="submit" value"submit" /><i class="icon-search icon-white"></i></button>
