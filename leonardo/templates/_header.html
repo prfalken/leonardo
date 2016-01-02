@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/">
+      <a class="navbar-brand" href="{{ url_for("index") }}">
         {{ leonardo.dash_title }}
       </a>
     </div>
@@ -30,7 +30,7 @@
           {% endfor %}
       </ul>
 
-      <form name="dashboards" class="form-search navbar-form navbar-left" method="get" action="/search">
+      <form name="dashboards" class="form-search navbar-form navbar-left" method="get" action="{{ url_for("search") }}">
         <div class="form-group">
           <input name="dashboard" class="form-control" type="text" placeholder="Dashboard..." data-provide="typeahead" data-items="10" data-source='{{ leonardo.search_elements | safe }}' autocomplete="off" required />
         </div>

@@ -1,4 +1,4 @@
-from flask import request, redirect
+from flask import request, redirect, url_for
 import re
 from .. import app
 from ..leonardo import Leonardo
@@ -35,6 +35,6 @@ def search():
     if len(dashboard_list) == 1:
         category, name = dashboard_list[0].split('/')
         app.logger.debug("redirecting to /%s/%s"  % (category, name))
-        return redirect("/%s/%s" % (category, name))
+        return redirect(url_for("dash", category=category, dash=name))
     else:
         return multiple(dashboard_list)
