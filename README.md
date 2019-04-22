@@ -22,13 +22,12 @@ This dashboard is a Flask application. Have a look at [this documentation](http:
 
 If you just want to play with it, simply install dependencies and launch the run script:
 
-    # pip install pyyaml
-    # pip install flask
+    # pip3.7 install -r requirements.txt
     # ./run.py
 
 If you want to run tests:
 
-    # pip install nose
+    # pip3.7 install nose
     # nosetests
 
 remember to make sure there is an empty 'graphs' directory in the root directory for testing.

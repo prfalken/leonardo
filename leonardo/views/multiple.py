@@ -31,7 +31,7 @@ def multiple(asked_dashboards = None):
             dashboard.graphs = dashboard.graphs()
             dashboard_list.append(dashboard)
 
-    args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in request.args.items() ] )
+    args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in list(request.args.items()) ] )
 
     resp = make_response( render_template("multiple.html", leonardo = leonardo, dashboard_list = dashboard_list, args = args_string ) )
 

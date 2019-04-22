@@ -2,7 +2,7 @@ FROM ubuntu:14.04
 
 RUN apt-get update
 
-RUN apt-get install -y python-pip git build-essential
+RUN apt-get install -y python3-pip git build-essential
 
 WORKDIR /leonardo
 
