@@ -36,7 +36,7 @@
           </div>
       </div>
     </div>
-    {% if not dashboard.no_resize and loop.index is divisibleby dashboard.graph_columns %}
+    {% if not dashboard.no_resize and loop.index is divisibleby(dashboard.graph_columns) %}
       </div>
       <div class="row graph-row">
     {% endif %}

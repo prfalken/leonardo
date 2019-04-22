@@ -1,2 +1,4 @@
-Flask==0.10.1
-PyYAML==3.11
+Flask==0.12.4
+PyYAML==5.1
+mock
+nose
