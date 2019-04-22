@@ -23,7 +23,7 @@ logging:
 """
 
 from . import app
-import config
+from . import config
 import logging
 import logging.handlers
 
@@ -62,10 +62,10 @@ def level_from_str(s):
         return None
 
 
-if config.YAML_CONFIG.has_key('logging'):
+if 'logging' in config.YAML_CONFIG:
     for i in config.YAML_CONFIG.get('logging'):
 
-        key = i.keys()[0] # Get the key 
+        key = list(i.keys())[0] # Get the key 
         level = level_from_str(i[key].get('level', None))
 
         def get_option(key, option, default=None, required=False):

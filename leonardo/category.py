@@ -1,6 +1,6 @@
 import os
 import yaml
-from dashboard import Dashboard
+from .dashboard import Dashboard
 
 
 class Category:

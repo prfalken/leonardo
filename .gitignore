@@ -7,3 +7,5 @@ graphs/*
 Leonardo.egg-info/
 build/
 dist/
+.idea/
+*.iml

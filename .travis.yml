@@ -1,9 +1,10 @@
+dist: xenial   # required for Python >= 3.7
 language: python
 python:
-  - "2.7"
+  - "3.7"
 before_script:
   - cp ./config/leonardo.yaml.example ./config/leonardo.yaml
   - mkdir -p ./graphs
 # command to run tests
 script:
-  - python setup.py nosetests
+  - python3.7 setup.py nosetests
