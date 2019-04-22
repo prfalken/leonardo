@@ -1,6 +1,6 @@
 # Leonardo
 
-[![Build Status](https://travis-ci.org/PrFalken/leonardo.png?branch=master)](https://travis-ci.org/PrFalken/leonardo)
+[![Build Status](https://travis-ci.org/prfalken/leonardo.png?branch=master)](https://travis-ci.org/PrFalken/leonardo)
 
 A Graphite Dashboard, massively inspired by the excellent [GDash](https://github.com/ripienaar/gdash) made by [ripienaar](https://github.com/ripienaar)
 
