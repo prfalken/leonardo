@@ -1,7 +1,7 @@
 
 import os
-import category
-import config
+from . import category
+from . import config
 from time import strftime, localtime
 
 

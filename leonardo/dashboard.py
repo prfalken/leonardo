@@ -1,8 +1,8 @@
 import os, fnmatch
 import glob
 import yaml
-from graph import GraphiteGraph
-from log import LoggingException
+from .graph import GraphiteGraph
+from .log import LoggingException
 
 class Dashboard:
     def __init__(self, short_name, graph_templates, category, options={}, graphite_render=""):
@@ -102,7 +102,7 @@ class Dashboard:
         options['from']   = self.properties['graph_from']
         options['until']   = self.properties['graph_until']
 
-        overrides = { k : v for k,v in options.items() if v }
+        overrides = { k : v for k,v in list(options.items()) if v }
         if self.properties.get('graph_properties'):
             overrides.update(self.properties['graph_properties'])
         if options.get('placeholder'):
@@ -111,7 +111,7 @@ class Dashboard:
         graphs = self.list_graphs()
         graphite_graphs = []
         
-        for gname, gfile in graphs.items():
+        for gname, gfile in list(graphs.items()):
             gg = GraphiteGraph( gfile, overrides )
             graphite_graphs.append( { 'name': gname , 'graphite' : gg  } )
 
@@ -124,7 +124,7 @@ class Dashboard:
         options['from']   = self.properties['graph_from']
         options['until']   = self.properties['graph_until']
 
-        overrides = { k : v for k,v in options.items() if v }
+        overrides = { k : v for k,v in list(options.items()) if v }
         if self.properties.get('graph_properties'):
             overrides.update(self.properties['graph_properties'])
         if options.get('placeholder'):

@@ -1,10 +1,10 @@
 from flask import request, render_template, make_response, redirect, url_for
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from .. import app
 from ..graph import GraphiteGraph
 from ..leonardo import Leonardo
-from helpers import zoom
+from .helpers import zoom
 
 
 @app.route('/')
@@ -19,7 +19,7 @@ def index():
 
     favorite_dashboard = request.cookies.get('favorite')
     if favorite_dashboard is not None:
-        category, dash = filter(None, urllib.unquote(favorite_dashboard).split('/'))[-2:]
+        category, dash = [_f for _f in urllib.parse.unquote(favorite_dashboard).split('/') if _f][-2:]
         app.logger.debug('Redirect to favorite dashboard /%s/%s' % (category, dash) )
         return redirect( url_for('dash', category = category, dash = dash) )
 
@@ -70,7 +70,7 @@ def dash(category, dash):
     # Build Dashboard
     dashboard = leonardo.top_level[category].dashboard(dash, options)
 
-    args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in request.args.items() ] )
+    args_string = '&'.join( [ "%s=%s" % (k,v) for k,v in list(request.args.items()) ] )
 
     # Retrieve zoomed values if necessary, and update dashboard with new width and height properties
     dashboard = zoom(request, dashboard)
@@ -80,7 +80,7 @@ def dash(category, dash):
 
     # check if dashboard is set as favorite
     favorite_dashboard = request.cookies.get('favorite', '')
-    if urllib.unquote( favorite_dashboard ) == request.path:
+    if urllib.parse.unquote( favorite_dashboard ) == request.path:
         dashboard.properties['favorite'] = True
 
     if request.args.get('full'):

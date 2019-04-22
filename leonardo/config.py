@@ -10,9 +10,8 @@ config_filename = os.environ.get('CONFIG_FILE',
                                  basedir + "/../config/leonardo.yaml")
 
 with open(config_filename) as config_file:
-     YAML_CONFIG = yaml.load( config_file.read() )
+     YAML_CONFIG = yaml.load(config_file.read(), Loader=yaml.SafeLoader)
 
 
 # Handles env variable for the graphite server
 YAML_CONFIG['graphite'] = os.environ.get('GRAPHITE_SERVER', YAML_CONFIG['graphite'])
-

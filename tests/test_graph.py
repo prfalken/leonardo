@@ -1,5 +1,5 @@
 import unittest
-import urlparse
+import urllib.parse
 
 from leonardo import graph
 
@@ -17,7 +17,7 @@ class GraphTest(unittest.TestCase):
         self.assertEqual( self.g.properties.get("title") , "Combined CPU Usage")
 
     def test_url(self):
-        parts = urlparse.parse_qs( self.g.url(), keep_blank_values=True)
+        parts = urllib.parse.parse_qs( self.g.url(), keep_blank_values=True)
         self.assertEqual ( parts, 
             {   'from'  : ['-1hour'], 
                 'target': ['cactiStyle(alias(sumSeries(collectd.server-1.cpu.*.cpu.wait.value),"IO Wait"),"si")', 

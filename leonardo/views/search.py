@@ -2,7 +2,7 @@ from flask import request, redirect, url_for
 import re
 from .. import app
 from ..leonardo import Leonardo
-from multiple import multiple
+from .multiple import multiple
 
 @app.route('/search/')
 def search():
