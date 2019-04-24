@@ -9,5 +9,8 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
+    classifiers=[
+        'Topic :: Software Development :: Libraries',
+        'Programming Language :: Python :: 3.7']
 )
 

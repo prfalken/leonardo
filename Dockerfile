@@ -7,7 +7,7 @@ RUN apt-get install -y python3-pip git build-essential
 WORKDIR /leonardo
 
 ADD requirements.txt /leonardo/
-RUN  pip install -r requirements.txt
+RUN  pip3 install -r requirements.txt
 
 ADD . /leonardo/
 
