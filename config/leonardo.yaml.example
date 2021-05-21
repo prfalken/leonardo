@@ -1,5 +1,6 @@
 graphite: http://graphite.example.com
 templatedir: graphs
+proxy_graphite: true
 #:username: admin
 #:password: secret
 logging:

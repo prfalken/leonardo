@@ -4,9 +4,8 @@ from .dashboard import Dashboard
 
 
 class Category:
-    def __init__(self, graphite_base, render_url, graph_templates, name,  options={}):
-        self.graphite_base = graphite_base
-        self.graphite_render = self.graphite_base + "/render/"
+    def __init__(self, graphite_render, graph_templates, name,  options={}):
+        self.graphite_render = graphite_render
         self.graph_templates = graph_templates
         self.name = name
         self.dash_templates = "%s/%s" % (graph_templates, name)

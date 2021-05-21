@@ -19,7 +19,7 @@ def index():
 
     favorite_dashboard = request.cookies.get('favorite')
     if favorite_dashboard is not None:
-        category, dash = filter(None, urllib.parse.unquote(favorite_dashboard).split('/'))[-2:]
+        category, dash = list(filter(None, urllib.parse.unquote(favorite_dashboard).split('/')))[-2:]
         app.logger.debug('Redirect to favorite dashboard /%s/%s' % (category, dash) )
         return redirect( url_for('dash', category = category, dash = dash) )
 
