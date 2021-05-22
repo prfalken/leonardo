@@ -31,7 +31,7 @@ class Category:
                 yaml_file = os.path.join(self.dash_templates, dash, "dash.yaml")
                 if os.path.exists(yaml_file):
                     with open(yaml_file) as f:
-                        yaml_conf = yaml.load(f.read())
+                        yaml_conf = yaml.load(f.read(), Loader=yaml.FullLoader )
 
                     yaml_conf.update( { 'category' : self.name, 'link' : dash } ) 
                     dashboards.append(yaml_conf)

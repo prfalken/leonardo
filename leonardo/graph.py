@@ -3,7 +3,7 @@ from .log import LoggingException
 
 class Parser:
     def parse(self, input_string):
-        return yaml.load(input_string)
+        return yaml.load(input_string, Loader=yaml.FullLoader)
 
 
 

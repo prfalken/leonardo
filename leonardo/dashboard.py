@@ -35,7 +35,7 @@ class Dashboard:
             raise LoggingException("Cannot find YAML file %s" % yaml_file)
 
         with open(yaml_file) as yaml_conf:
-            self.properties.update( yaml.load(yaml_conf) )
+            self.properties.update( yaml.load(yaml_conf, Loader=yaml.FullLoader ) )
 
         # Include external properties
         properties_include = []
@@ -53,7 +53,7 @@ class Dashboard:
             yaml_file = os.path.join(graph_templates, property_file)
             if os.path.isfile(yaml_file):
                 with open(yaml_file) as yaml_conf:
-                    self.properties.update( yaml.load(yaml_conf) )
+                    self.properties.update( yaml.load(yaml_conf, Loader=yaml.FullLoader ) )
 
         # Graph inclusion
         include_option = self.properties.get('include_graphs')
