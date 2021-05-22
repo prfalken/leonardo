@@ -4,7 +4,6 @@ from . import category
 from . import config
 from time import strftime, localtime
 
-
 class Leonardo(object):
     ''' 
     Top level Class that defines the initial configuration of Leonard
@@ -31,8 +30,14 @@ class Leonardo(object):
         # where graphite lives
         self.graphite_base = config.YAML_CONFIG.get('graphite')
 
+        # proxy graphite or go directly?
+        self.proxy_graphite = config.YAML_CONFIG.get('proxy_graphite', False)
+
         # where the graphite renderer is
-        self.graphite_render = "%s/render/" % self.graphite_base
+        if self.proxy_graphite:
+          self.graphite_render = "/_graphite/" 
+        else:
+          self.graphite_render = "%s/render/" % self.graphite_base
 
         # where to find graph, dash etc templates
         self.graph_templates = config.YAML_CONFIG.get('templatedir')
@@ -70,8 +75,7 @@ class Leonardo(object):
 
             if os.listdir( os.path.join(self.graph_templates,category_name) ) != []:
 
-                self.top_level[category_name] = category.Category( self.graphite_base,
-                                                              "/render/",
+                self.top_level[category_name] = category.Category( self.graphite_render,
                                                               self.graph_templates,
                                                               category_name,
                                                               { "width" : self.graph_width,
